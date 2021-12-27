@@ -35,10 +35,6 @@ class CertificateDaoTest {
 		assertTrue(certificate.create("sample", "test", 111, "23") > 0);
 	}
 
-	@Test
-	void update() {
-		//assertTrue(certificate.update("updated", "daotest", 777, "2", 2) > 0);
-	}
 
 	@Test
 	void findAll() {

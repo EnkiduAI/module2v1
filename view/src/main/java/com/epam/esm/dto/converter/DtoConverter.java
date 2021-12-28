@@ -9,17 +9,37 @@ import com.epam.esm.model.entity.CertificateWithTag;
 import com.epam.esm.model.entity.GiftCertificate;
 import com.epam.esm.model.entity.Tag;
 
+
+/**
+ * Class DtoConverter.
+ */
 public class DtoConverter {
+	
+	/** Istance. */
 	private static DtoConverter instance = new DtoConverter();
 
+	/**
+	 * Instantiates a new dto converter.
+	 */
 	public DtoConverter() {
 		// default constructor
 	}
 
+	/**
+	 * Gets the single instance of DtoConverter.
+	 *
+	 * @return single instance of DtoConverter
+	 */
 	public static DtoConverter getInstance() {
 		return instance;
 	}
 
+	/**
+	 * Convert cert with tag.
+	 *
+	 * @param entity the entity
+	 * @return the certificate with tag dto
+	 */
 	public CertificateWithTagDto convertCertWithTag(CertificateWithTag entity) {
 		CertificateWithTagDto dto = new CertificateWithTagDto();
 		dto.setTagId(entity.getTagId());
@@ -34,6 +54,12 @@ public class DtoConverter {
 		return dto;
 	}
 
+	/**
+	 * Convert gift certificate.
+	 *
+	 * @param entity the entity
+	 * @return the gift certificate dto
+	 */
 	public GiftCertificateDto convertGiftCertificate(GiftCertificate entity) {
 		GiftCertificateDto dto = new GiftCertificateDto();
 		dto.setId(entity.getId());
@@ -46,6 +72,12 @@ public class DtoConverter {
 		return dto;
 	}
 
+	/**
+	 * Convert tag.
+	 *
+	 * @param entity the entity
+	 * @return the tag dto
+	 */
 	public TagDto convertTag(Tag entity) {
 		TagDto dto = new TagDto();
 		dto.setTagId(entity.getId());
@@ -53,14 +85,32 @@ public class DtoConverter {
 		return dto;
 	}
 	
+	/**
+	 * Convert certificates.
+	 *
+	 * @param list the list
+	 * @return the list
+	 */
 	public List<GiftCertificateDto> convertCertificates(List<GiftCertificate> list){
 		return list.stream().map(this::convertGiftCertificate).toList();
 	}
 	
+	/**
+	 * Convert tags.
+	 *
+	 * @param list the list
+	 * @return the list
+	 */
 	public List<TagDto> convertTags(List<Tag> list){
 		return list.stream().map(this::convertTag).toList();
 	}
 	
+	/**
+	 * Convert certs with tags.
+	 *
+	 * @param list the list
+	 * @return the list
+	 */
 	public List<CertificateWithTagDto> convertCertsWithTags(List<CertificateWithTag> list){
 		return list.stream().map(this::convertCertWithTag).toList();
 	}

@@ -16,7 +16,7 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
 @PropertySource("classpath:/database.properties")
 public class SpringConfig {
 	@Autowired
-	Environment env;
+	private Environment env;
 	
 	@Bean
 	public DataSource getDataSource() {

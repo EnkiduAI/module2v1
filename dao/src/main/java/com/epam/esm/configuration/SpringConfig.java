@@ -11,13 +11,24 @@ import org.springframework.core.env.Environment;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
+
+/**
+ * Class SpringConfig.
+ */
 @Configuration
 @ComponentScan("com.epam.esm")
 @PropertySource("classpath:/database.properties")
 public class SpringConfig {
+	
+	/** Environment. */
 	@Autowired
 	private Environment env;
 	
+	/**
+	 * Gets the data source.
+	 *
+	 * @return the data source
+	 */
 	@Bean
 	public DataSource getDataSource() {
 
@@ -29,6 +40,11 @@ public class SpringConfig {
 		return dataSource;
 	}
 
+	/**
+	 * Jdbc template.
+	 *
+	 * @return the jdbc template
+	 */
 	@Bean
 	public JdbcTemplate jdbcTemplate() {
 		return new JdbcTemplate(getDataSource());

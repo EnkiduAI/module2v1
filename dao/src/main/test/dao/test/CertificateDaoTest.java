@@ -15,29 +15,28 @@ import com.epam.esm.model.entity.GiftCertificate;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = SpringConfig.class)
-class CertificateDaoTest {
-	
-	public CertificateDaoTest() {
-	}
+ class CertificateDaoTest {
 	
 
+	
+	
 	@Autowired
-	JdbcTemplateCertificateDaoImpl certificate;
-
+	private JdbcTemplateCertificateDaoImpl certificate;
+	
 	@Test
-	void findByIdTest() {
+	protected void findByIdTest() {
 		GiftCertificate actual = certificate.findById(2);
 		assertNotNull(actual);
 	}
 
 	@Test
-	void create() {
+	protected void create() {
 		assertTrue(certificate.create("sample", "test", 111, "23") > 0);
 	}
 
 
 	@Test
-	void findAll() {
+	protected void findAll() {
 		assertNotNull(certificate.findAll());
 	}
 }

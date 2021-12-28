@@ -19,6 +19,7 @@ import com.epam.esm.model.entity.GiftCertificate;
 import com.epam.esm.model.entity.mapper.CertificateWithTagMapper;
 import com.epam.esm.model.entity.mapper.GiftCertificateMapper;
 
+
 @Repository
 public class JdbcTemplateCertificateDaoImpl implements CertificateDao {
 
@@ -78,6 +79,15 @@ public class JdbcTemplateCertificateDaoImpl implements CertificateDao {
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
 
+	/**
+	 * Creates gift certificate
+	 *
+	 * @param name the name
+	 * @param description the description
+	 * @param price the price
+	 * @param duration the duration
+	 * @return the int
+	 */
 	@Override
 	public int create(String name, String description, int price, String duration) {
 		KeyHolder key = new GeneratedKeyHolder();
@@ -100,43 +110,92 @@ public class JdbcTemplateCertificateDaoImpl implements CertificateDao {
 		return key.getKey().intValue();
 	}
 
+	/**
+	 * Updates gift certificate
+	 *
+	 * @param certificate the certificate
+	 * @param id the id
+	 * @return the int
+	 */
 	@Override
 	public int update(GiftCertificate certificate, int id) {
 		return jdbcTemplate.update(UPDATE_SERTIFICATE, certificate.getName(), certificate.getDescription(),
 				certificate.getPrice(), certificate.getDuration(), LocalDateTime.now(), id);
 	}
 
+	/**
+	 * Delete gift certificate
+	 *
+	 * @param id the id
+	 * @return the int
+	 */
 	@Override
 	public int delete(int id) {
 		return jdbcTemplate.update(DELETE_SERTIFICATE, id);
 	}
 
+	/**
+	 * Find certificate by id 
+	 *
+	 * @param id the id
+	 * @return the gift certificate
+	 */
 	@Override
 	public GiftCertificate findById(int id) {
 		return jdbcTemplate.queryForObject(FIND_BY_ID, new GiftCertificateMapper(), id);
 	}
 
+	/**
+	 * Find all certificates.
+	 *
+	 * @return the list
+	 */
 	@Override
 	public List<GiftCertificate> findAll() {
 		return jdbcTemplate.query(FIND_ALL, new GiftCertificateMapper());
 	}
 
+	/**
+	 * Bind tag to certificate.
+	 *
+	 * @param certificateId the certificate id
+	 * @param tagId the tag id
+	 * @return the int
+	 */
 	@Override
 	public int bindTag(int certificateId, int tagId) {
 		return jdbcTemplate.update(BIND_TAG, certificateId, tagId);
 	}
 
+	/**
+	 * Find all certificates with tags.
+	 *
+	 * @return the list
+	 */
 	@Override
 	public List<CertificateWithTag> findAllCertificatesWithTags() {
 		return jdbcTemplate.query(FIND_ALL_CERTIFICATES_WITH_TAGS, new CertificateWithTagMapper());
 	}
 
+	/**
+	 * Find certificates with tags.
+	 *
+	 * @param tagId the tag id
+	 * @param certificateId the certificate id
+	 * @return the certificate with tag
+	 */
 	@Override
 	public CertificateWithTag findCertificateWithTag(int tagId, int certificateId) {
 		return jdbcTemplate.queryForObject(FIND_CERTIFICATE_WITH_TAG, new CertificateWithTagMapper(), tagId,
 				certificateId);
 	}
 
+	/**
+	 * Unbind certificate.
+	 *
+	 * @param id the id
+	 * @return the int
+	 */
 	@Override
 	public int unbindCertificate(int id) {
 		return jdbcTemplate.update(UNBIND_CERTIFICATE, id);

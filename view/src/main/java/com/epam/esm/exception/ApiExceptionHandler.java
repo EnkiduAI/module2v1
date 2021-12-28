@@ -10,7 +10,6 @@ import org.springframework.web.server.ResponseStatusException;
 public class ApiExceptionHandler {
 
 	@ResponseStatus(code = HttpStatus.INTERNAL_SERVER_ERROR)
-
 	@ExceptionHandler(Exception.class)
 	public ResponseStatusException notFountHandler() {
 		return new ResponseStatusException(404, "Certificate not found", null);

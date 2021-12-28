@@ -15,19 +15,41 @@ import com.epam.esm.model.entity.GiftCertificate;
 import com.epam.esm.model.entity.Tag;
 import com.epam.esm.model.service.ProjectService;
 
+
+/**
+ * Class ProjectServiceImpl.
+ */
 @Service
 public class ProjectServiceImpl implements ProjectService {
 
-	JdbcTemplateCertificateDaoImpl certificateDao;
+	/** Certificate dao. */
+	private JdbcTemplateCertificateDaoImpl certificateDao;
 
-	JdbcTemplateTagDaoImpl tagDao;
+	/** Tag dao. */
+	private JdbcTemplateTagDaoImpl tagDao;
 
+	/**
+	 * Instantiates a new project service impl.
+	 *
+	 * @param certificateDao the certificate dao
+	 * @param tagDao the tag dao
+	 */
 	@Autowired
 	public ProjectServiceImpl(JdbcTemplateCertificateDaoImpl certificateDao, JdbcTemplateTagDaoImpl tagDao) {
 		this.certificateDao = certificateDao;
 		this.tagDao = tagDao;
 	}
 
+	/**
+	 * Creates the certificate.
+	 *
+	 * @param name the name
+	 * @param description the description
+	 * @param price the price
+	 * @param duration the duration
+	 * @return the gift certificate
+	 * @throws ServiceException the service exception
+	 */
 	@Transactional
 	@Override
 	public GiftCertificate createCertificate(String name, String description, int price, String duration)
@@ -36,6 +58,17 @@ public class ProjectServiceImpl implements ProjectService {
 		return certificateDao.findById(id);
 	}
 
+	/**
+	 * Creates the certificate.
+	 *
+	 * @param tagName the tag name
+	 * @param certificateName the certificate name
+	 * @param description the description
+	 * @param price the price
+	 * @param duration the duration
+	 * @return the certificate with tag
+	 * @throws ServiceException the service exception
+	 */
 	@Transactional
 	@Override
 	public CertificateWithTag createCertificate(String tagName, String certificateName, String description, int price,
@@ -49,6 +82,13 @@ public class ProjectServiceImpl implements ProjectService {
 		}
 	}
 
+	/**
+	 * Creates the tag.
+	 *
+	 * @param name the name
+	 * @return the tag
+	 * @throws ServiceException the service exception
+	 */
 	@Transactional
 	@Override
 	public Tag createTag(String name) throws ServiceException {
@@ -56,26 +96,60 @@ public class ProjectServiceImpl implements ProjectService {
 		return tagDao.findById(id);
 	}
 
+	/**
+	 * Find certificate by id.
+	 *
+	 * @param id the id
+	 * @return the gift certificate
+	 * @throws ServiceException the service exception
+	 */
 	@Override
 	public GiftCertificate findCertificateById(int id) throws ServiceException {
 		return certificateDao.findById(id);
 	}
 
+	/**
+	 * Find tag by id.
+	 *
+	 * @param id the id
+	 * @return the tag
+	 * @throws ServiceException the service exception
+	 */
 	@Override
 	public Tag findTagById(int id) throws ServiceException {
 		return tagDao.findById(id);
 	}
 
+	/**
+	 * Find all certificates.
+	 *
+	 * @return the list
+	 * @throws ServiceException the service exception
+	 */
 	@Override
 	public List<GiftCertificate> findAllCertificates() throws ServiceException {
 		return certificateDao.findAll();
 	}
 
+	/**
+	 * Find all tags.
+	 *
+	 * @return the list
+	 * @throws ServiceException the service exception
+	 */
 	@Override
 	public List<Tag> findAllTags() throws ServiceException {
 		return tagDao.findAll();
 	}
 
+	/**
+	 * Update certificate.
+	 *
+	 * @param certificate the certificate
+	 * @param id the id
+	 * @return the gift certificate
+	 * @throws ServiceException the service exception
+	 */
 	@Transactional
 	@Override
 	public GiftCertificate update(GiftCertificate certificate, int id) throws ServiceException {
@@ -84,6 +158,15 @@ public class ProjectServiceImpl implements ProjectService {
 		return certificateDao.findById(certificateId);
 	}
 
+	/**
+	 * Update certificate with tag.
+	 *
+	 * @param tagName the tag name
+	 * @param certificate the certificate
+	 * @param certificateId the certificate id
+	 * @return the certificate with tag
+	 * @throws ServiceException the service exception
+	 */
 	@Transactional
 	@Override
 	public CertificateWithTag update(String tagName, GiftCertificate certificate, int certificateId)
@@ -98,6 +181,13 @@ public class ProjectServiceImpl implements ProjectService {
 		}
 	}
 
+	/**
+	 * Delete certificate.
+	 *
+	 * @param certId the cert id
+	 * @return the gift certificate
+	 * @throws ServiceException the service exception
+	 */
 	@Transactional
 	@Override
 	public GiftCertificate deleteCertificate(int certId) throws ServiceException {
@@ -110,6 +200,13 @@ public class ProjectServiceImpl implements ProjectService {
 		}
 	}
 
+	/**
+	 * Delete tag.
+	 *
+	 * @param tagId the tag id
+	 * @return the tag
+	 * @throws ServiceException the service exception
+	 */
 	@Transactional
 	@Override
 	public Tag deleteTag(int tagId) throws ServiceException {
@@ -121,6 +218,15 @@ public class ProjectServiceImpl implements ProjectService {
 		}
 	}
 
+	/**
+	 * Gets the certificates with tags.
+	 *
+	 * @param tagName the tag name
+	 * @param certificateName the certificate name
+	 * @param sortType the sort type
+	 * @return the certificates with tags
+	 * @throws ServiceException the service exception
+	 */
 	@Override
 	public List<CertificateWithTag> getCertificatesWithTags(String tagName, String certificateName, String sortType)
 			throws ServiceException {

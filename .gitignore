@@ -3,6 +3,7 @@
 .classpath
 .gitattributes
 .project
+*.class
 settings.gradle
 */bin/*
 bin/*

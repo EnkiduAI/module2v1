@@ -31,7 +31,7 @@ public class WebConfig implements WebApplicationInitializer{
 		
 		registration.setLoadOnStartup(1);
 		
-		registration.addMapping("/api/app/*");
+		registration.addMapping("/api/*");
 		
 	}
 

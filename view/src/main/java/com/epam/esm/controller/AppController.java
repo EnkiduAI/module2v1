@@ -48,7 +48,7 @@ public class AppController {
 	 * @return all certificates
 	 * @throws ServiceException the service exception
 	 */
-	@GetMapping("/get_certificates")
+	@GetMapping("/certificates")
 	@ResponseBody
 	public ResponseEntity<List<GiftCertificateDto>> getAllCertificates() throws ServiceException {
 		List<GiftCertificate> giftCertificates;
@@ -68,7 +68,7 @@ public class AppController {
 	 * @return all tags
 	 * @throws ServiceException the service exception
 	 */
-	@GetMapping("/get_tags")
+	@GetMapping("/tags")
 	@ResponseBody
 	public ResponseEntity<List<TagDto>> getAllTags() throws ServiceException {
 		List<Tag> tags = service.findAllTags();
@@ -82,10 +82,10 @@ public class AppController {
 	 * @return the certificate by id
 	 * @throws ServiceException the service exception
 	 */
-	@GetMapping("/certificate/{id}")
+	@GetMapping("/certificates/{id}")
 	@ResponseBody
 	public ResponseEntity<GiftCertificateDto> getCertificateById(@PathVariable("id") int id) throws ServiceException {
-		 GiftCertificate certificate = service.findCertificateById(id);
+		GiftCertificate certificate = service.findCertificateById(id);
 		return new ResponseEntity<>(converter.convertGiftCertificate(certificate), HttpStatus.OK);
 	}
 
@@ -96,7 +96,7 @@ public class AppController {
 	 * @return tag by id
 	 * @throws ServiceException the service exception
 	 */
-	@GetMapping("/tag/{id}")
+	@GetMapping("/tags/{id}")
 	@ResponseBody
 	public ResponseEntity<TagDto> getTagById(@PathVariable("id") int id) throws ServiceException {
 		Tag tag = new Tag();
@@ -114,14 +114,12 @@ public class AppController {
 	 * @param fieldMap the field map
 	 * @return the certificates with tags
 	 */
-	@GetMapping("/get_certificates_tags")
+	@GetMapping("/filter")
 	@ResponseBody
-	public ResponseEntity<List<CertificateWithTagDto>> getCertificatesWithTags(
-			@RequestBody Map<String, String> fieldMap) {
+	public ResponseEntity<List<CertificateWithTagDto>> getCertificatesWithTags(@RequestBody Map<String, String> fields) {
 		List<CertificateWithTag> cwt = new ArrayList<>();
 		try {
-			cwt = service.getCertificatesWithTags(fieldMap.get("tagName"), fieldMap.get("certificateName"),
-					fieldMap.get("sortType"));
+			cwt = service.getCertificatesWithTags(fields.get("tagName"), fields.get("certificateName"), fields.get("sortType"));
 		} catch (ServiceException e) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
@@ -134,13 +132,13 @@ public class AppController {
 	 * @param fields the fields
 	 * @return response entity
 	 */
-	@PostMapping("/create_certificate")
+	@PostMapping("/certificate")
 	@ResponseBody
 	public ResponseEntity<GiftCertificateDto> createCertificate(@RequestBody Map<String, Object> fields) {
 		GiftCertificate certificate = new GiftCertificate();
 		try {
-			certificate = service.createCertificate(fields.get("name").toString(),
-					fields.get("description").toString(),(int)fields.get("price"), fields.get("duration").toString());
+			certificate = service.createCertificate(fields.get("name").toString(), fields.get("description").toString(),
+					(int) fields.get("price"), fields.get("duration").toString());
 		} catch (ServiceException e) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
@@ -153,10 +151,10 @@ public class AppController {
 	 * @param tag the tag
 	 * @return response entity
 	 */
-	@PostMapping("/create_tag")
+	@PostMapping("/tag")
 	@ResponseBody
 	public ResponseEntity<TagDto> createTag(@RequestBody Tag tag) {
-		Tag tagToCreate = new Tag();	
+		Tag tagToCreate = new Tag();
 		try {
 			tagToCreate = service.createTag(tag.getName());
 		} catch (ServiceException e) {
@@ -172,7 +170,7 @@ public class AppController {
 	 * @param CertificateWithTag the cwt
 	 * @return response entity
 	 */
-	@PostMapping("/create_certificate_tag")
+	@PostMapping("/certificate_tag")
 	@ResponseBody
 	public ResponseEntity<CertificateWithTagDto> createCertificateWithTag(@RequestBody CertificateWithTag cwt) {
 		CertificateWithTag created = new CertificateWithTag();
@@ -191,7 +189,7 @@ public class AppController {
 	 * @param id the id
 	 * @return response entity
 	 */
-	@DeleteMapping("/delete_certificate/{id}")
+	@DeleteMapping("/certificate/{id}")
 	@ResponseBody
 	public ResponseEntity<GiftCertificateDto> deleteCertificate(@PathVariable("id") int id) {
 		GiftCertificate certificate = new GiftCertificate();
@@ -200,7 +198,7 @@ public class AppController {
 		} catch (ServiceException e) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
-		return new ResponseEntity<>(converter.convertGiftCertificate(certificate), HttpStatus.OK);
+		return new ResponseEntity<>(converter.convertGiftCertificate(certificate), HttpStatus.NO_CONTENT);
 	}
 
 	/**
@@ -209,7 +207,7 @@ public class AppController {
 	 * @param id the id
 	 * @return response entity
 	 */
-	@DeleteMapping("/delete_tag/{id}")
+	@DeleteMapping("/tag/{id}")
 	public ResponseEntity<TagDto> deleteTag(@PathVariable("id") int id) {
 		Tag tag = new Tag();
 		try {
@@ -217,17 +215,17 @@ public class AppController {
 		} catch (ServiceException e) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
-		return new ResponseEntity<>(converter.convertTag(tag), HttpStatus.OK);
+		return new ResponseEntity<>(converter.convertTag(tag), HttpStatus.NO_CONTENT);
 	}
 
 	/**
 	 * Update gift certificate.
 	 *
-	 * @param id the id
+	 * @param id      the id
 	 * @param request the request
 	 * @return response entity
 	 */
-	@PatchMapping(value = "/updateCertificate/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+	@PatchMapping(value = "/certificate/update/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	public ResponseEntity<GiftCertificateDto> updateGiftCertificate(@PathVariable("id") int id,
 			@RequestBody GiftCertificate request) {
@@ -253,18 +251,18 @@ public class AppController {
 		}
 		return new ResponseEntity<>(converter.convertGiftCertificate(updated), HttpStatus.OK);
 	}
-	
+
 	/**
 	 * Update certificate with tag.
 	 *
-	 * @param id the id
+	 * @param id     the id
 	 * @param fields the fields
 	 * @return response entity
 	 */
-	@PatchMapping(value = "/updateCertificateWithTag/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+	@PatchMapping(value = "/certificate_tag/update/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	public ResponseEntity<CertificateWithTagDto> updateCertificateWithTag(@PathVariable("id") int id,
-			@RequestBody Map<String, Object> fields){
+			@RequestBody Map<String, Object> fields) {
 		GiftCertificate certificateToUpdate = new GiftCertificate();
 		CertificateWithTag updated = new CertificateWithTag();
 		try {
@@ -276,13 +274,13 @@ public class AppController {
 				certificateToUpdate.setDescription(fields.get("description").toString());
 			}
 			if (fields.get("price") != null) {
-				certificateToUpdate.setPrice((int)fields.get("price"));
+				certificateToUpdate.setPrice((int) fields.get("price"));
 			}
 			if (fields.get("duration") != null) {
 				certificateToUpdate.setDuration(fields.get("duration").toString());
 			}
-			updated = service.update(fields.get("tagName").toString(),certificateToUpdate, id);
-		}catch (ServiceException e) {
+			updated = service.update(fields.get("tagName").toString(), certificateToUpdate, id);
+		} catch (ServiceException e) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
 		return new ResponseEntity<>(converter.convertCertWithTag(updated), HttpStatus.OK);

@@ -25,6 +25,8 @@ public class WebConfig implements WebApplicationInitializer{
 		AnnotationConfigWebApplicationContext appContext = new AnnotationConfigWebApplicationContext();
 		appContext.register(AppConfig.class);
 		
+		servletContext.setInitParameter("spring.profiles.active", "prod");
+		
 		DispatcherServlet dispatcherServlet = new DispatcherServlet(appContext);
 		
 		ServletRegistration.Dynamic registration = servletContext.addServlet("dispatcher", dispatcherServlet);

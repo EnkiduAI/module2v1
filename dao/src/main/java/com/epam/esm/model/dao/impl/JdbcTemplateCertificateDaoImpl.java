@@ -26,7 +26,7 @@ public class JdbcTemplateCertificateDaoImpl implements CertificateDao {
 	private static final String FIND_BY_ID = "select gift_certificate.id, gift_certificate.name, "
 			+ "gift_certificate.description, gift_certificate.price, "
 			+ "gift_certificate.duration, gift_certificate.create_date, "
-			+ "gift_certificate.last_update_date from certificates.gift_certificate " + "where gift_certificate.id =?";
+			+ "gift_certificate.last_update_date from gift_certificate " + "where gift_certificate.id =?";
 
 	private static final String FIND_ALL = """
 			select gift_certificate.id, gift_certificate.name,
@@ -76,8 +76,12 @@ public class JdbcTemplateCertificateDaoImpl implements CertificateDao {
 			where gt.gift_certificate_id = ?
 			""";
 
-	@Autowired
 	private JdbcTemplate jdbcTemplate;
+	
+	@Autowired
+	public JdbcTemplateCertificateDaoImpl(JdbcTemplate jdbcTemplate) {
+		this.jdbcTemplate = jdbcTemplate;
+	}
 
 	/**
 	 * Creates gift certificate

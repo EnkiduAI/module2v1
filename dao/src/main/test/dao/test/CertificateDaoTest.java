@@ -10,13 +10,13 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import com.epam.esm.configuration.TestProfile;
+import com.epam.esm.configuration.TestConfig;
 import com.epam.esm.model.dao.impl.JdbcTemplateCertificateDaoImpl;
 import com.epam.esm.model.entity.GiftCertificate;
 
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = TestProfile.class)
+@ContextConfiguration(classes = TestConfig.class)
 @ActiveProfiles(profiles = "dev")
 class CertificateDaoTest {
 

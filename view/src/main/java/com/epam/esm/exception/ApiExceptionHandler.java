@@ -1,18 +1,18 @@
 package com.epam.esm.exception;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+import com.epam.esm.exception.entity.ExceptionResponseBody;
 
-@ControllerAdvice
+@RestControllerAdvice
 public class ApiExceptionHandler {
 
-	@ResponseStatus(code = HttpStatus.INTERNAL_SERVER_ERROR)
-	@ExceptionHandler(Exception.class)
-	public ResponseStatusException notFountHandler() {
-		return new ResponseStatusException(404, "Certificate not found", null);
+	@ExceptionHandler(Throwable.class)
+	public ResponseEntity<ExceptionResponseBody> handle(Throwable e) {
+		ExceptionResponseBody exception = new ExceptionResponseBody(HttpStatus.NOT_FOUND.value(), e.getLocalizedMessage());
+		return new ResponseEntity<>(exception, HttpStatus.NOT_FOUND);
 	}
 
 }

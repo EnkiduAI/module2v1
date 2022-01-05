@@ -9,6 +9,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -41,13 +42,12 @@ public class CertificateWithTagController {
 	 * @param fieldMap the field map
 	 * @return the certificates with tags
 	 */
+	@GetMapping
 	@ResponseBody
-	public ResponseEntity<List<CertificateWithTagDto>> getCertificatesWithTags(
-			@RequestBody Map<String, String> fields) {
+	public ResponseEntity<List<CertificateWithTagDto>> getCertificatesWithTags() {
 		List<CertificateWithTag> cwt = new ArrayList<>();
 		try {
-			cwt = service.getCertificatesWithTags(fields.get("tagName"), fields.get("certificateName"),
-					fields.get("sortType"));
+			cwt = service.getCertificatesWithTags();
 		} catch (ServiceException e) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}

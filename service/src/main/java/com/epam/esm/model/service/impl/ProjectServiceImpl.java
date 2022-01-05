@@ -15,7 +15,6 @@ import com.epam.esm.model.entity.GiftCertificate;
 import com.epam.esm.model.entity.Tag;
 import com.epam.esm.model.service.ProjectService;
 
-
 /**
  * Class ProjectServiceImpl.
  */
@@ -32,7 +31,7 @@ public class ProjectServiceImpl implements ProjectService {
 	 * Instantiates a new project service impl.
 	 *
 	 * @param certificateDao the certificate dao
-	 * @param tagDao the tag dao
+	 * @param tagDao         the tag dao
 	 */
 	@Autowired
 	public ProjectServiceImpl(JdbcTemplateCertificateDaoImpl certificateDao, JdbcTemplateTagDaoImpl tagDao) {
@@ -43,10 +42,10 @@ public class ProjectServiceImpl implements ProjectService {
 	/**
 	 * Creates the certificate.
 	 *
-	 * @param name the name
+	 * @param name        the name
 	 * @param description the description
-	 * @param price the price
-	 * @param duration the duration
+	 * @param price       the price
+	 * @param duration    the duration
 	 * @return the gift certificate
 	 * @throws ServiceException the service exception
 	 */
@@ -61,11 +60,11 @@ public class ProjectServiceImpl implements ProjectService {
 	/**
 	 * Creates the certificate.
 	 *
-	 * @param tagName the tag name
+	 * @param tagName         the tag name
 	 * @param certificateName the certificate name
-	 * @param description the description
-	 * @param price the price
-	 * @param duration the duration
+	 * @param description     the description
+	 * @param price           the price
+	 * @param duration        the duration
 	 * @return the certificate with tag
 	 * @throws ServiceException the service exception
 	 */
@@ -146,7 +145,7 @@ public class ProjectServiceImpl implements ProjectService {
 	 * Update certificate.
 	 *
 	 * @param certificate the certificate
-	 * @param id the id
+	 * @param id          the id
 	 * @return the gift certificate
 	 * @throws ServiceException the service exception
 	 */
@@ -161,8 +160,8 @@ public class ProjectServiceImpl implements ProjectService {
 	/**
 	 * Update certificate with tag.
 	 *
-	 * @param tagName the tag name
-	 * @param certificate the certificate
+	 * @param tagName       the tag name
+	 * @param certificate   the certificate
 	 * @param certificateId the certificate id
 	 * @return the certificate with tag
 	 * @throws ServiceException the service exception
@@ -221,37 +220,70 @@ public class ProjectServiceImpl implements ProjectService {
 	/**
 	 * Gets the certificates with tags.
 	 *
-	 * @param tagName the tag name
+	 * @param tagName         the tag name
 	 * @param certificateName the certificate name
-	 * @param sortType the sort type
+	 * @param sortType        the sort type
 	 * @return the certificates with tags
 	 * @throws ServiceException the service exception
 	 */
 	@Override
-	public List<CertificateWithTag> getCertificatesWithTags(String tagName, String certificateName, String sortType)
-			throws ServiceException {
+	public List<CertificateWithTag> getCertificatesWithTags() throws ServiceException {
 		List<CertificateWithTag> list = certificateDao.findAllCertificatesWithTags();
-		if (certificateName != null) {
-			list = list.stream().filter(e -> e.getCertificateName().contains(certificateName)).toList();
-		}
-		if (tagName != null) {
-			list = list.stream().filter(e -> e.getTagName().equals(tagName)).toList();
-		}
-		if (sortType != null) {
-			switch (sortType) {
+		return list;
+	}
 
-			case ("ASC"):
-				list = list.stream().sorted(Comparator.comparing(CertificateWithTag::getCertificateName)).toList();
-				break;
+	// list =
+	// list.stream().sorted(Comparator.comparing(CertificateWithTag::getCertificateName).reversed())
+	@Override
+	public List<CertificateWithTag> getCertificatesWithTagsByTagname(String tagName) throws ServiceException {
+		return certificateDao.findCertificateWithTagByTagname(tagName);
+	}
 
-			case ("DESC"):
-				list = list.stream().sorted(Comparator.comparing(CertificateWithTag::getCertificateName).reversed())
-						.toList();
-				break;
+	@Override
+	public List<CertificateWithTag> getCertificatesWithTagsByTagnameSorted(String tagName, String sortType)
+			throws ServiceException {
+		List<CertificateWithTag> list = certificateDao.findCertificateWithTagByTagname(tagName);		
+		return sort(list, sortType);
+	}
 
-			default:
-				break;
-			}
+	@Override
+	public List<CertificateWithTag> getCertificatesWithTagsByCertificate(String certificateName)
+			throws ServiceException {
+		return certificateDao.findCertificateWithTagByCertificate(certificateName);
+	}
+
+	@Override
+	public List<CertificateWithTag> getCertificatesWithTagsByCertificateSorted(String certificateName, String sortType)
+			throws ServiceException {
+		List<CertificateWithTag> list = certificateDao.findCertificateWithTagByCertificate(certificateName);		
+		return sort(list, sortType);
+	}
+
+	@Override
+	public List<CertificateWithTag> getCertificatesWithTagsByCertificateAndTagname(String tagName,
+			String certificateName) throws ServiceException {
+		return certificateDao.findCertificateWithTagByCertificateAndTagname(tagName, certificateName);
+	}
+
+	@Override
+	public List<CertificateWithTag> getCertificatesWithTagsByCertificateAndTagnameSorted(String tagName,
+			String certificateName, String sortType) throws ServiceException {
+		List<CertificateWithTag> list = certificateDao.findCertificateWithTagByCertificateAndTagname(tagName,
+				certificateName);		
+		return sort(list, sortType);
+	}
+
+	public List<CertificateWithTag> sort(List<CertificateWithTag> list, String sortType) {
+		switch (sortType) {
+		case ("ASC"):
+			list = list.stream().sorted(Comparator.comparing(CertificateWithTag::getCertificateName)).toList();
+			break;
+		case ("DESC"):
+			list = list.stream().sorted(Comparator.comparing(CertificateWithTag::getCertificateName).reversed())
+					.toList();
+			break;
+		default:
+			break;
 		}
 		return list;
 	}

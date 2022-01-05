@@ -1,7 +1,6 @@
 package service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDateTime;
@@ -60,8 +59,8 @@ public class ProjectServiceTest {
 	
 	@Test
 	protected void findCertficatesWithTags() throws ServiceException {
-		when(service.getCertificatesWithTags(anyString(), anyString(), anyString())).thenReturn(certsWithTags);
-		List<CertificateWithTag> expected = service.getCertificatesWithTags("TkjGG","c", "ASC");
+		when(service.getCertificatesWithTags()).thenReturn(certsWithTags);
+		List<CertificateWithTag> expected = service.getCertificatesWithTags();
 		assertEquals(expected, certsWithTags);
 	}
 	

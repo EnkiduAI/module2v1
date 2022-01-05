@@ -19,7 +19,6 @@ import com.epam.esm.model.entity.GiftCertificate;
 import com.epam.esm.model.entity.mapper.CertificateWithTagMapper;
 import com.epam.esm.model.entity.mapper.GiftCertificateMapper;
 
-
 @Repository
 public class JdbcTemplateCertificateDaoImpl implements CertificateDao {
 
@@ -61,6 +60,36 @@ public class JdbcTemplateCertificateDaoImpl implements CertificateDao {
 			join tag as t on t.id = gt.tag_id
 			""";
 
+	private static final String FIND_ALL_CERTIFICATES_WITH_TAGS_BY_TAGNAME = """
+			SELECT t.id, t.tag_name, gc.id, gc.name, gc.description,
+			gc.price, gc.duration, gc.create_date,
+			gc.last_update_date
+			FROM certificates.gift_certificate_has_tag as gt
+			join gift_certificate as gc on gc.id = gt.gift_certificate_id
+			join tag as t on t.id = gt.tag_id
+			where t.tag_name = ?
+			""";
+
+	private static final String FIND_ALL_CERTIFICATES_WITH_TAGS_BY_CERTIFICATE = """
+			SELECT t.id, t.tag_name, gc.id, gc.name, gc.description,
+			gc.price, gc.duration, gc.create_date,
+			gc.last_update_date
+			FROM certificates.gift_certificate_has_tag as gt
+			join gift_certificate as gc on gc.id = gt.gift_certificate_id
+			join tag as t on t.id = gt.tag_id
+			where gc.name like ?
+			""";
+
+	private static final String CERTIFICATES_WITH_TAGS_BY_CERTIFICATE_AND_TAGNAME = """
+			SELECT t.id, t.tag_name, gc.id, gc.name, gc.description,
+			gc.price, gc.duration, gc.create_date,
+			gc.last_update_date
+			FROM certificates.gift_certificate_has_tag as gt
+			join gift_certificate as gc on gc.id = gt.gift_certificate_id
+			join tag as t on t.id = gt.tag_id
+			where t.tag_name = ? and gc.name like ?  
+			""";
+
 	private static final String FIND_CERTIFICATE_WITH_TAG = """
 			SELECT t.id, t.tag_name, gc.id, gc.name, gc.description,
 			gc.price, gc.duration, gc.create_date,
@@ -77,7 +106,7 @@ public class JdbcTemplateCertificateDaoImpl implements CertificateDao {
 			""";
 
 	private JdbcTemplate jdbcTemplate;
-	
+
 	@Autowired
 	public JdbcTemplateCertificateDaoImpl(JdbcTemplate jdbcTemplate) {
 		this.jdbcTemplate = jdbcTemplate;
@@ -86,10 +115,10 @@ public class JdbcTemplateCertificateDaoImpl implements CertificateDao {
 	/**
 	 * Creates gift certificate
 	 *
-	 * @param name the name
+	 * @param name        the name
 	 * @param description the description
-	 * @param price the price
-	 * @param duration the duration
+	 * @param price       the price
+	 * @param duration    the duration
 	 * @return the int
 	 */
 	@Override
@@ -118,7 +147,7 @@ public class JdbcTemplateCertificateDaoImpl implements CertificateDao {
 	 * Updates gift certificate
 	 *
 	 * @param certificate the certificate
-	 * @param id the id
+	 * @param id          the id
 	 * @return the int
 	 */
 	@Override
@@ -139,7 +168,7 @@ public class JdbcTemplateCertificateDaoImpl implements CertificateDao {
 	}
 
 	/**
-	 * Find certificate by id 
+	 * Find certificate by id
 	 *
 	 * @param id the id
 	 * @return the gift certificate
@@ -163,7 +192,7 @@ public class JdbcTemplateCertificateDaoImpl implements CertificateDao {
 	 * Bind tag to certificate.
 	 *
 	 * @param certificateId the certificate id
-	 * @param tagId the tag id
+	 * @param tagId         the tag id
 	 * @return the int
 	 */
 	@Override
@@ -184,7 +213,7 @@ public class JdbcTemplateCertificateDaoImpl implements CertificateDao {
 	/**
 	 * Find certificates with tags.
 	 *
-	 * @param tagId the tag id
+	 * @param tagId         the tag id
 	 * @param certificateId the certificate id
 	 * @return the certificate with tag
 	 */
@@ -203,5 +232,22 @@ public class JdbcTemplateCertificateDaoImpl implements CertificateDao {
 	@Override
 	public int unbindCertificate(int id) {
 		return jdbcTemplate.update(UNBIND_CERTIFICATE, id);
+	}
+
+	@Override
+	public List<CertificateWithTag> findCertificateWithTagByTagname(String tagName) {
+		return jdbcTemplate.query(FIND_ALL_CERTIFICATES_WITH_TAGS_BY_TAGNAME, new CertificateWithTagMapper(), tagName);
+	}
+
+	@Override
+	public List<CertificateWithTag> findCertificateWithTagByCertificate(String partName) {
+		return jdbcTemplate.query(FIND_ALL_CERTIFICATES_WITH_TAGS_BY_CERTIFICATE, new CertificateWithTagMapper(),
+				"%" + partName + "%");
+	}
+
+	@Override
+	public List<CertificateWithTag> findCertificateWithTagByCertificateAndTagname(String tagName, String certificateName) {
+		return jdbcTemplate.query(CERTIFICATES_WITH_TAGS_BY_CERTIFICATE_AND_TAGNAME, new CertificateWithTagMapper(),
+				tagName, "%" + certificateName + "%");
 	}
 }

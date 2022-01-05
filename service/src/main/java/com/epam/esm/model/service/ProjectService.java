@@ -12,7 +12,7 @@ public interface ProjectService {
 			throws ServiceException;// check
 
 	CertificateWithTag createCertificate(String tagName, String certificateName, String description, int price,
-			String duration) throws ServiceException;//check
+			String duration) throws ServiceException;// check
 
 	Tag createTag(String name) throws ServiceException;// check
 
@@ -24,12 +24,28 @@ public interface ProjectService {
 
 	List<Tag> findAllTags() throws ServiceException;// check
 
-	GiftCertificate update(GiftCertificate certificate, int id) throws ServiceException;//check
+	GiftCertificate update(GiftCertificate certificate, int id) throws ServiceException;// check
 
 	CertificateWithTag update(String tagName, GiftCertificate certificate, int certificateId) throws ServiceException;
 
-	List<CertificateWithTag> getCertificatesWithTags(String tagName, String certificateName, String sortType)
-			throws ServiceException;//check
+	List<CertificateWithTag> getCertificatesWithTags()
+			throws ServiceException;// check
+
+	List<CertificateWithTag> getCertificatesWithTagsByTagname(String tagName) throws ServiceException;
+
+	List<CertificateWithTag> getCertificatesWithTagsByTagnameSorted(String tagName, String sortType)
+			throws ServiceException;
+
+	List<CertificateWithTag> getCertificatesWithTagsByCertificate(String certificateName) throws ServiceException;
+
+	List<CertificateWithTag> getCertificatesWithTagsByCertificateSorted(String certificateName, String sortType)
+			throws ServiceException;
+
+	List<CertificateWithTag> getCertificatesWithTagsByCertificateAndTagname(String tagName, String certificateName)
+			throws ServiceException;
+
+	List<CertificateWithTag> getCertificatesWithTagsByCertificateAndTagnameSorted(String tagName,
+			String certificateName, String sortType) throws ServiceException;
 
 	GiftCertificate deleteCertificate(int certId) throws ServiceException;// check
 

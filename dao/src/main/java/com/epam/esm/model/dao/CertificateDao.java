@@ -15,4 +15,7 @@ public interface CertificateDao {
 	List<GiftCertificate> findAll();	
 	List<CertificateWithTag>findAllCertificatesWithTags();
 	CertificateWithTag findCertificateWithTag(int tagId, int certificateId);
+	List<CertificateWithTag> findCertificateWithTagByTagname(String tagName);
+	List<CertificateWithTag> findCertificateWithTagByCertificate(String partName);
+	List<CertificateWithTag> findCertificateWithTagByCertificateAndTagname(String tagName, String certificateName);
 }

@@ -1,0 +1,14 @@
+/.gradle/
+.settings/*
+*/.settings/*
+.classpath
+.gitattributes
+.project
+*.class
+settings.gradle
+*/bin/*
+bin/*
+*/default/*
+default/*
+*/ImportedClasses/*
+ImportedClasses/*

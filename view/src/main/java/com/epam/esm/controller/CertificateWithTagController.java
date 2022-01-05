@@ -54,12 +54,94 @@ public class CertificateWithTagController {
 		return new ResponseEntity<>(converter.convertCertsWithTags(cwt), HttpStatus.OK);
 	}
 
+	@GetMapping("/tag/{name}")
+	@ResponseBody
+	public ResponseEntity<List<CertificateWithTagDto>> getCertificatesWithTagByTagname(
+			@PathVariable(name = "name", required = false) String tagName) {
+		List<CertificateWithTag> cwt = new ArrayList<>();
+		try {
+			cwt = service.getCertificatesWithTagsByTagname(tagName);
+		} catch (ServiceException e) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
+		return new ResponseEntity<>(converter.convertCertsWithTags(cwt), HttpStatus.OK);
+	}
+
+	@GetMapping("/tag/{name}/{sortType}")
+	@ResponseBody
+	public ResponseEntity<List<CertificateWithTagDto>> getCertificatesWithTagByTagnameSorted(
+			@PathVariable("name") String tagName, @PathVariable("sortType") String sortType) {
+		List<CertificateWithTag> cwt = new ArrayList<>();
+		try {
+			cwt = service.getCertificatesWithTagsByTagnameSorted(tagName, sortType);
+		} catch (ServiceException e) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
+		return new ResponseEntity<>(converter.convertCertsWithTags(cwt), HttpStatus.OK);
+	}
+
+	@GetMapping("/certificate/{name}")
+	@ResponseBody
+	public ResponseEntity<List<CertificateWithTagDto>> getCertificatesWithTagByCertificate(
+			@PathVariable("name") String certificateName) {
+		List<CertificateWithTag> cwt = new ArrayList<>();
+		try {
+			cwt = service.getCertificatesWithTagsByCertificate(certificateName);
+		} catch (ServiceException e) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
+		return new ResponseEntity<>(converter.convertCertsWithTags(cwt), HttpStatus.OK);
+	}
+
+	@GetMapping("/certificate/{name}/{sortType}")
+	@ResponseBody
+	public ResponseEntity<List<CertificateWithTagDto>> getCertificatesWithTagByCertificateSorted(
+
+			@PathVariable("name") String certificateName, @PathVariable("sortType") String sortType) {
+		List<CertificateWithTag> cwt = new ArrayList<>();
+		try {
+			cwt = service.getCertificatesWithTagsByCertificateSorted(certificateName, sortType);
+		} catch (ServiceException e) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
+		return new ResponseEntity<>(converter.convertCertsWithTags(cwt), HttpStatus.OK);
+	}
+
+	@GetMapping("/{tagName}/{certificateName}")
+	@ResponseBody
+	public ResponseEntity<List<CertificateWithTagDto>> getCertificatesWithTagByCertificateAndTagname(
+
+			@PathVariable("certificateName") String certificateName, @PathVariable("tagName") String tagName) {
+		List<CertificateWithTag> cwt = new ArrayList<>();
+		try {
+			cwt = service.getCertificatesWithTagsByCertificateAndTagname(tagName, certificateName);
+		} catch (ServiceException e) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
+		return new ResponseEntity<>(converter.convertCertsWithTags(cwt), HttpStatus.OK);
+	}
+
+	@GetMapping("/{tagName}/{certificateName}/{sortType}")
+	@ResponseBody
+	public ResponseEntity<List<CertificateWithTagDto>> getCertificatesWithTagByCertificateAndTagname(
+			@PathVariable("tagName") String tagName, @PathVariable("certificateName") String certificateName,
+			@PathVariable("sortType") String sortType) {
+		List<CertificateWithTag> cwt = new ArrayList<>();
+		try {
+			cwt = service.getCertificatesWithTagsByCertificateAndTagnameSorted(tagName, certificateName, sortType);
+		} catch (ServiceException e) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
+		return new ResponseEntity<>(converter.convertCertsWithTags(cwt), HttpStatus.OK);
+	}
+
 	/**
 	 * Creates certificate with tag.
 	 *
 	 * @param CertificateWithTag the cwt
 	 * @return response entity
 	 */
+
 	@ResponseBody
 	public ResponseEntity<CertificateWithTagDto> createCertificateWithTag(@RequestBody CertificateWithTag cwt) {
 		CertificateWithTag created = new CertificateWithTag();
@@ -71,7 +153,7 @@ public class CertificateWithTagController {
 		}
 		return new ResponseEntity<>(converter.convertCertWithTag(created), HttpStatus.OK);
 	}
-	
+
 	/**
 	 * Update certificate with tag.
 	 *
@@ -80,8 +162,10 @@ public class CertificateWithTagController {
 	 * @return response entity
 	 */
 	@PatchMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+
 	@ResponseBody
 	public ResponseEntity<CertificateWithTagDto> updateCertificateWithTag(@PathVariable("id") int id,
+
 			@RequestBody Map<String, Object> fields) {
 		GiftCertificate certificateToUpdate = new GiftCertificate();
 		CertificateWithTag updated = new CertificateWithTag();
@@ -105,4 +189,5 @@ public class CertificateWithTagController {
 		}
 		return new ResponseEntity<>(converter.convertCertWithTag(updated), HttpStatus.OK);
 	}
+
 }

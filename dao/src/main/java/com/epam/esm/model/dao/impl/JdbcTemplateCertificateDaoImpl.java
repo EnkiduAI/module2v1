@@ -31,11 +31,11 @@ public class JdbcTemplateCertificateDaoImpl implements CertificateDao {
 			select gift_certificate.id, gift_certificate.name,
 			gift_certificate.description, gift_certificate.price,
 			gift_certificate.duration, gift_certificate.create_date,
-			gift_certificate.last_update_date from certificates.gift_certificate
+			gift_certificate.last_update_date from gift_certificate
 			""";
 
 	private static final String INSERT_CERTIFICATE = """
-			insert into certificates.gift_certificate values(null, ?, ?, ?, ?, ?, ?)
+			insert into gift_certificate values(null, ?, ?, ?, ?, ?, ?)
 			""";
 
 	private static final String UPDATE_SERTIFICATE = """
@@ -87,7 +87,7 @@ public class JdbcTemplateCertificateDaoImpl implements CertificateDao {
 			FROM certificates.gift_certificate_has_tag as gt
 			join gift_certificate as gc on gc.id = gt.gift_certificate_id
 			join tag as t on t.id = gt.tag_id
-			where t.tag_name = ? and gc.name like ?  
+			where t.tag_name = ? and gc.name like ?
 			""";
 
 	private static final String FIND_CERTIFICATE_WITH_TAG = """
@@ -104,7 +104,7 @@ public class JdbcTemplateCertificateDaoImpl implements CertificateDao {
 			delete from certificates.gift_certificate_has_tag as gt
 			where gt.gift_certificate_id = ?
 			""";
-
+	
 	private JdbcTemplate jdbcTemplate;
 
 	@Autowired
@@ -246,7 +246,8 @@ public class JdbcTemplateCertificateDaoImpl implements CertificateDao {
 	}
 
 	@Override
-	public List<CertificateWithTag> findCertificateWithTagByCertificateAndTagname(String tagName, String certificateName) {
+	public List<CertificateWithTag> findCertificateWithTagByCertificateAndTagname(String tagName,
+			String certificateName) {
 		return jdbcTemplate.query(CERTIFICATES_WITH_TAGS_BY_CERTIFICATE_AND_TAGNAME, new CertificateWithTagMapper(),
 				tagName, "%" + certificateName + "%");
 	}

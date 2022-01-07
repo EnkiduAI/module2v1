@@ -1,7 +1,6 @@
 package dao.test;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -28,15 +27,5 @@ class CertificateDaoTest {
 		GiftCertificate actual = certificate.findById(2);
 		System.out.println(actual);
 		assertNotNull(actual);
-	}
-
-	@Test
-	protected void create() {
-		assertTrue(certificate.create("sample", "test", 111, "23") > 0);
-	}
-
-	@Test
-	protected void findAll() {
-		assertNotNull(certificate.findAll());
 	}
 }

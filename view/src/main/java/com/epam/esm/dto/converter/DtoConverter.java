@@ -5,9 +5,11 @@ import java.util.List;
 import com.epam.esm.dto.CertificateWithTagDto;
 import com.epam.esm.dto.GiftCertificateDto;
 import com.epam.esm.dto.TagDto;
+import com.epam.esm.dto.UserDto;
 import com.epam.esm.model.entity.CertificateWithTag;
 import com.epam.esm.model.entity.GiftCertificate;
 import com.epam.esm.model.entity.Tag;
+import com.epam.esm.model.entity.User;
 
 
 /**
@@ -113,5 +115,17 @@ public class DtoConverter {
 	 */
 	public List<CertificateWithTagDto> convertCertsWithTags(List<CertificateWithTag> list){
 		return list.stream().map(this::convertCertWithTag).toList();
+	}
+	
+	public UserDto convertUser(User user) {
+		UserDto dto = new UserDto();
+		dto.setUserId(user.getUserId());
+		dto.setUserName(user.getUserName());
+		dto.setUserSurname(user.getUserSurname());
+		return dto;
+	}
+	
+	public List<UserDto> convertUserList(List<User> userList){
+		return userList.stream().map(this::convertUser).toList();
 	}
 }

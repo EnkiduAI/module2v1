@@ -3,6 +3,7 @@ package com.epam.esm.model.entity;
 import java.time.LocalDateTime;
 
 import org.springframework.stereotype.Component;
+
 @Component
 public class GiftCertificate {
 	private int id;
@@ -12,8 +13,6 @@ public class GiftCertificate {
 	private String duration;
 	private LocalDateTime createDate;
 	private LocalDateTime lastUpdateDate;
-
-
 
 	public GiftCertificate() {
 		
@@ -85,8 +84,6 @@ public class GiftCertificate {
 	public void setLastUpdateDate(LocalDateTime lastUpdateDate) {
 		this.lastUpdateDate = lastUpdateDate;
 	}
-
-
 
 	@Override
 	public int hashCode() {

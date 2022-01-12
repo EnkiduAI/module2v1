@@ -19,11 +19,11 @@ import com.epam.esm.dto.TagDto;
 import com.epam.esm.dto.converter.DtoConverter;
 import com.epam.esm.exception.ServiceException;
 import com.epam.esm.model.entity.Tag;
-import com.epam.esm.model.service.impl.ProjectServiceImpl;
+import com.epam.esm.model.service.impl.TagServiceImpl;
 
 @RestController
 @ComponentScan(basePackages = { "com.epam.esm" })
-@RequestMapping("/tags")
+@RequestMapping("/view/api/tags")
 public class TagController {
 
 	/** Converter. */
@@ -31,7 +31,7 @@ public class TagController {
 
 	/** Service. */
 	@Autowired
-	private ProjectServiceImpl service;
+	private TagServiceImpl service;
 	
 	/**
 	 * Gets all tags.

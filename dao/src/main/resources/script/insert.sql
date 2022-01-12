@@ -6,3 +6,6 @@ insert into gift_certificate values(1, 'Java', 'Java courses', '20', '24', '2020
 insert into gift_certificate values(2, 'Guardians of the galaxy', 'Marvel film', '45', '24', '2020-04-11T15:32:12', '2020-05-11T15:32:12');
 insert into gift_certificate values(3, 'Apple', 'a tasty apple', '23','24','2020-10-11T15:32:12', '2020-11-11T15:32:12');
 
+insert into users values(1, 'Sarah', 'Kerrigan');
+insert into users values(2, 'Jim', 'Raynor');
+insert into users values(3, 'Arcturus', 'Mengsk');

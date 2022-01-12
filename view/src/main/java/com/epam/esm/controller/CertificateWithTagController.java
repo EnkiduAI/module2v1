@@ -22,7 +22,7 @@ import com.epam.esm.dto.converter.DtoConverter;
 import com.epam.esm.exception.ServiceException;
 import com.epam.esm.model.entity.CertificateWithTag;
 import com.epam.esm.model.entity.GiftCertificate;
-import com.epam.esm.model.service.impl.ProjectServiceImpl;
+import com.epam.esm.model.service.impl.CertificateServiceImpl;
 
 @RestController
 @ComponentScan(basePackages = { "com.epam.esm" })
@@ -34,7 +34,7 @@ public class CertificateWithTagController {
 
 	/** Service. */
 	@Autowired
-	private ProjectServiceImpl service;
+	private CertificateServiceImpl service;
 
 	/**
 	 * Gets certificates with tags.

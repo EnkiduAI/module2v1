@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -33,6 +34,10 @@ public class JdbcTemplateTagDaoImpl implements TagDao {
 	/** Search by id query */
 	private static final String FIND_BY_ID = """
 			select tag.id, tag.tag_name from certificates.tag where id=?
+			""";
+	
+	private static final String FIND_BY_NAME = """
+			select id, tag_name from tag where tag_name = ?
 			""";
 
 	/** Find all tags query */
@@ -124,6 +129,15 @@ public class JdbcTemplateTagDaoImpl implements TagDao {
 	@Override
 	public int unbindTag(int id) {
 		return jdbcTemplate.update(UNBIND_TAG, id);
+	}
+
+	@Override
+	public Tag findByName(String name) {
+		try {
+			return jdbcTemplate.queryForObject(FIND_BY_NAME, new TagMapper(), name);
+		}catch(EmptyResultDataAccessException e) {
+			return null;
+		}
 	}
 
 }

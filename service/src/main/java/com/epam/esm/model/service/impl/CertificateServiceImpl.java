@@ -12,6 +12,7 @@ import com.epam.esm.model.dao.impl.JdbcTemplateCertificateDaoImpl;
 import com.epam.esm.model.dao.impl.JdbcTemplateTagDaoImpl;
 import com.epam.esm.model.entity.CertificateWithTag;
 import com.epam.esm.model.entity.GiftCertificate;
+import com.epam.esm.model.entity.Tag;
 import com.epam.esm.model.service.CertificateService;
 
 @Service
@@ -61,7 +62,13 @@ public class CertificateServiceImpl implements CertificateService {
 	@Override
 	public CertificateWithTag createCertificate(String tagName, String certificateName, String description, int price,
 			String duration) throws ServiceException {
-		int tagId = tagDao.create(tagName);
+		int tagId;
+		Tag expectedTag = tagDao.findByName(tagName);
+		if (expectedTag != null) {
+			tagId = expectedTag.getId();
+		} else {
+			tagId = tagDao.create(tagName);
+		}
 		int certificateId = certificateDao.create(certificateName, description, price, duration);
 		if (certificateDao.bindTag(certificateId, tagId) > 0) {
 			return certificateDao.findCertificateWithTag(tagId, certificateId);
@@ -122,9 +129,15 @@ public class CertificateServiceImpl implements CertificateService {
 	@Override
 	public CertificateWithTag update(String tagName, GiftCertificate certificate, int certificateId)
 			throws ServiceException {
+		int tagId;
 		certificateDao.update(certificate, certificateId);
 		int certId = certificate.getId();
-		int tagId = tagDao.create(tagName);
+		Tag expectedTag = tagDao.findByName(tagName);
+		if (expectedTag != null) {
+			tagId = expectedTag.getId();
+		} else {
+			tagId = tagDao.create(tagName);
+		}
 		if (certificateDao.bindTag(certId, tagId) > 0) {
 			return certificateDao.findCertificateWithTag(tagId, certId);
 		} else {
@@ -142,7 +155,7 @@ public class CertificateServiceImpl implements CertificateService {
 	 * @throws ServiceException the service exception
 	 */
 	@Override
-	public List<CertificateWithTag> getCertificatesWithTags() throws ServiceException {		
+	public List<CertificateWithTag> getCertificatesWithTags() throws ServiceException {
 		return certificateDao.findAllCertificatesWithTags();
 	}
 
@@ -156,7 +169,7 @@ public class CertificateServiceImpl implements CertificateService {
 	@Override
 	public List<CertificateWithTag> getCertificatesWithTagsByTagnameSorted(String tagName, String sortType)
 			throws ServiceException {
-		List<CertificateWithTag> list = certificateDao.findCertificateWithTagByTagname(tagName);		
+		List<CertificateWithTag> list = certificateDao.findCertificateWithTagByTagname(tagName);
 		return sort(list, sortType);
 	}
 
@@ -169,7 +182,7 @@ public class CertificateServiceImpl implements CertificateService {
 	@Override
 	public List<CertificateWithTag> getCertificatesWithTagsByCertificateSorted(String certificateName, String sortType)
 			throws ServiceException {
-		List<CertificateWithTag> list = certificateDao.findCertificateWithTagByCertificate(certificateName);		
+		List<CertificateWithTag> list = certificateDao.findCertificateWithTagByCertificate(certificateName);
 		return sort(list, sortType);
 	}
 
@@ -183,7 +196,7 @@ public class CertificateServiceImpl implements CertificateService {
 	public List<CertificateWithTag> getCertificatesWithTagsByCertificateAndTagnameSorted(String tagName,
 			String certificateName, String sortType) throws ServiceException {
 		List<CertificateWithTag> list = certificateDao.findCertificateWithTagByCertificateAndTagname(tagName,
-				certificateName);		
+				certificateName);
 		return sort(list, sortType);
 	}
 
@@ -205,7 +218,7 @@ public class CertificateServiceImpl implements CertificateService {
 			throw new ServiceException("Method deleteCertificate at ProjectServiceImpl was interrupted with error");
 		}
 	}
-	
+
 	public List<CertificateWithTag> sort(List<CertificateWithTag> list, String sortType) {
 		switch (sortType) {
 		case ("ASC"):

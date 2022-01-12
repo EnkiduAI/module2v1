@@ -68,11 +68,12 @@ public class TagServiceImpl implements TagService {
 	@Transactional
 	@Override
 	public Tag deleteTag(int tagId) throws ServiceException {
+		tagDao.unbindTag(tagId);
 		Tag deleted = tagDao.findById(tagId);
 		if (tagDao.delete(tagId) > 0) {
 			return deleted;
 		} else {
-			throw new ServiceException("Method deleteTag at ProjectServiceImpl was interrupted with error");
+			throw new ServiceException("Method deleteTag at ProjectServiceImpl has been interrupted with error");
 		}
 	}
 }

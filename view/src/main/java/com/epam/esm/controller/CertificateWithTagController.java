@@ -7,7 +7,6 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -26,7 +25,7 @@ import com.epam.esm.model.service.impl.CertificateServiceImpl;
 
 @RestController
 @ComponentScan(basePackages = { "com.epam.esm" })
-@RequestMapping("/certificateWithTag")
+@RequestMapping("/view/api/certificateWithTag")
 public class CertificateWithTagController {
 
 	/** Converter. */
@@ -161,11 +160,9 @@ public class CertificateWithTagController {
 	 * @param fields the fields
 	 * @return response entity
 	 */
-	@PatchMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
-
+	@PatchMapping("/{id}")
 	@ResponseBody
 	public ResponseEntity<CertificateWithTagDto> updateCertificateWithTag(@PathVariable("id") int id,
-
 			@RequestBody Map<String, Object> fields) {
 		GiftCertificate certificateToUpdate = new GiftCertificate();
 		CertificateWithTag updated = new CertificateWithTag();

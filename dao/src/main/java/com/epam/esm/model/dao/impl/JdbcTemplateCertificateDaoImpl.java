@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -104,7 +105,7 @@ public class JdbcTemplateCertificateDaoImpl implements CertificateDao {
 			delete from certificates.gift_certificate_has_tag as gt
 			where gt.gift_certificate_id = ?
 			""";
-	
+
 	private JdbcTemplate jdbcTemplate;
 
 	@Autowired
@@ -175,7 +176,11 @@ public class JdbcTemplateCertificateDaoImpl implements CertificateDao {
 	 */
 	@Override
 	public GiftCertificate findById(int id) {
-		return jdbcTemplate.queryForObject(FIND_BY_ID, new GiftCertificateMapper(), id);
+		try {
+			return jdbcTemplate.queryForObject(FIND_BY_ID, new GiftCertificateMapper(), id);
+		} catch (EmptyResultDataAccessException e) {
+			return null;
+		}
 	}
 
 	/**

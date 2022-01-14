@@ -10,7 +10,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.epam.esm.configuration.TestConfig;
-import com.epam.esm.model.dao.impl.JdbcTemplateUserDao;
+import com.epam.esm.model.dao.impl.JdbcTemplateUserDaoImpl;
 import com.epam.esm.model.entity.User;
 
 @ExtendWith(SpringExtension.class)
@@ -19,7 +19,7 @@ import com.epam.esm.model.entity.User;
 class UserDaoTest {
 
 	@Autowired
-	public JdbcTemplateUserDao userDao;
+	public JdbcTemplateUserDaoImpl userDao;
 	
 	@Test
 	void findAllTest() {

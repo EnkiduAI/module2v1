@@ -6,17 +6,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.epam.esm.exception.ServiceException;
-import com.epam.esm.model.dao.impl.JdbcTemplateUserDao;
+import com.epam.esm.model.dao.impl.JdbcTemplateUserDaoImpl;
 import com.epam.esm.model.entity.User;
 import com.epam.esm.model.service.UserService;
 
 @Service
 public class UserServiceImpl implements UserService {
 
-	private JdbcTemplateUserDao userDao;
+	private JdbcTemplateUserDaoImpl userDao;
 
 	@Autowired
-	public UserServiceImpl(JdbcTemplateUserDao userDao) {
+	public UserServiceImpl(JdbcTemplateUserDaoImpl userDao) {
 		this.userDao = userDao;
 	}
 

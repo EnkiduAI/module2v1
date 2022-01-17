@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.epam.esm.exception.ServiceException;
 import com.epam.esm.model.dao.impl.JdbcTemplateUserDaoImpl;
+import com.epam.esm.model.entity.Tag;
 import com.epam.esm.model.entity.User;
 import com.epam.esm.model.service.UserService;
 
@@ -28,5 +29,10 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public List<User> findAll() throws ServiceException {
 		return userDao.findAll();
+	}
+
+	@Override
+	public Tag findMostPopularTag() throws ServiceException {
+		return userDao.findMostPopularTag();
 	}
 }

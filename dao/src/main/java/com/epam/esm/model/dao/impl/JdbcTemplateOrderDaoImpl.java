@@ -13,38 +13,42 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
+import org.springframework.stereotype.Repository;
 
 import com.epam.esm.model.dao.OrderDao;
 import com.epam.esm.model.entity.GiftCertificate;
 import com.epam.esm.model.entity.Order;
 import com.epam.esm.model.entity.User;
 import com.epam.esm.model.entity.mapper.OrderMapper;
-
+@Repository
 public class JdbcTemplateOrderDaoImpl implements OrderDao{
 	
 	private static final String CREATE_ORDER = """
-			insert into order values(null,?,?,?,?)
+			insert into certificates.order values(null,?,?,?,?)
 			""";
 	private static final String FIND_ALL_USER_ORDERS = """
-			select order_id, c.name, c.description,
-			price, purchase_date
-			from order
-			join gift_certificate as c on c.id = order.id_certificate
+			select id_order, id_user, u.user_name, u.user_surname, c.name, c.description,
+			o.price, purchase_date
+			from certificates.order as o
+			join gift_certificate as c on c.id = o.id_certificate
+			join users as u on u.user_id = id_user
 			where id_user = ? 
 			""";
 	private static final String FIND_USER_ORDER_BY_ID = """
-			select order_id, c.name, c.description,
-			price, purchase_date
-			from order
-			join gift_certificate as c on c.id = order.id_certificate
-			where id_user = ? and order_id = ?
+			select id_order, id_user, user_name, user_surname, c.name, c.description,
+			o.price, purchase_date
+			from certificates.order as o
+			join gift_certificate as c on c.id = o.id_certificate
+			join users on users.user_id = o.id_user
+			where id_user = ? and id_order = ?
 			""";
 	private static final String FIND_ORDER_BY_ID = """
-			select order_id, c.name, c.description,
-			price, purchase_date
-			from order
-			join gift_certificate as c on c.id = order.id_certificate
-			where order_id = ?
+			select id_order, id_user, u.user_name, u.user_surname, c.name, c.description,
+			o.price, purchase_date
+			from certificates.order as o
+			join gift_certificate as c on c.id = o.id_certificate
+			join users as u on u.user_id = o.id_user
+			where id_order = ?
 			""";
 	
 	private JdbcTemplate jdbcTemplate;

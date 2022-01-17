@@ -1,11 +1,8 @@
-package com.epam.esm.model.entity;
+package com.epam.esm.dto;
 
 import java.time.LocalDateTime;
 
-import org.springframework.stereotype.Component;
-
-@Component
-public class Order {
+public class OrderDto {
 	private int orderId;
 	private int userId;
 	private String userName;
@@ -15,12 +12,13 @@ public class Order {
 	private int price;
 	private LocalDateTime purchaseDate;
 	
-	public Order() {
+	public OrderDto() {
 		
 	}
 
-	public Order(int orderId, int userId, String userName, String userSurname, String certificateName,
+	public OrderDto(int orderId, int userId, String userName, String userSurname, String certificateName,
 			String certificateDescription, int price, LocalDateTime purchaseDate) {
+		super();
 		this.orderId = orderId;
 		this.userId = userId;
 		this.userName = userName;
@@ -118,7 +116,7 @@ public class Order {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Order other = (Order) obj;
+		OrderDto other = (OrderDto) obj;
 		if (certificateDescription == null) {
 			if (other.certificateDescription != null)
 				return false;
@@ -156,7 +154,7 @@ public class Order {
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("Order [orderId=");
+		builder.append("OrderDto [orderId=");
 		builder.append(orderId);
 		builder.append(", userId=");
 		builder.append(userId);

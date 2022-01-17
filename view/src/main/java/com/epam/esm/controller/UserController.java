@@ -13,9 +13,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.epam.esm.dto.TagDto;
 import com.epam.esm.dto.UserDto;
 import com.epam.esm.dto.converter.DtoConverter;
 import com.epam.esm.exception.ServiceException;
+import com.epam.esm.model.entity.Tag;
 import com.epam.esm.model.entity.User;
 import com.epam.esm.model.service.impl.UserServiceImpl;
 
@@ -51,5 +53,17 @@ public class UserController {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
 		return new ResponseEntity<>(converter.convertUser(user), HttpStatus.OK);
+	}
+	
+	@GetMapping("/popular/tag")
+	@ResponseBody
+	public ResponseEntity<TagDto> getMostPopularTag() throws ServiceException{
+		Tag tag = new Tag();
+		try {
+			tag = service.findMostPopularTag();
+		}catch(ServiceException e) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
+		return new ResponseEntity<>(converter.convertTag(tag), HttpStatus.OK);
 	}
 }

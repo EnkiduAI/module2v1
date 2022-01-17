@@ -66,6 +66,21 @@ public class CertificateWithTagController {
 		return new ResponseEntity<>(converter.convertCertsWithTags(cwt), HttpStatus.OK);
 	}
 
+	@GetMapping("/tags/{tag}")
+	public ResponseEntity<List<CertificateWithTagDto>> getCertificatesByMultipleTags(@PathVariable("tag") List<String> tags) {
+		List<CertificateWithTag> certificatesList = new ArrayList<>();
+		List<CertificateWithTag> freshElements = new ArrayList<>();
+		try {
+			for (String tag : tags) {
+				freshElements = service.getCertificatesWithTagsByTagname(tag);
+				certificatesList.addAll(freshElements);
+			}
+		} catch (ServiceException e) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
+		return new ResponseEntity<>(converter.convertCertsWithTags(certificatesList),HttpStatus.OK);
+	}
+
 	@GetMapping("/tag/{name}/{sortType}")
 	@ResponseBody
 	public ResponseEntity<List<CertificateWithTagDto>> getCertificatesWithTagByTagnameSorted(

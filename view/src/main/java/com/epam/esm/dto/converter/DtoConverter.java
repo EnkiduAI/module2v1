@@ -4,19 +4,20 @@ import java.util.List;
 
 import com.epam.esm.dto.CertificateWithTagDto;
 import com.epam.esm.dto.GiftCertificateDto;
+import com.epam.esm.dto.OrderDto;
 import com.epam.esm.dto.TagDto;
 import com.epam.esm.dto.UserDto;
 import com.epam.esm.model.entity.CertificateWithTag;
 import com.epam.esm.model.entity.GiftCertificate;
+import com.epam.esm.model.entity.Order;
 import com.epam.esm.model.entity.Tag;
 import com.epam.esm.model.entity.User;
-
 
 /**
  * Class DtoConverter.
  */
 public class DtoConverter {
-	
+
 	/** Istance. */
 	private static DtoConverter instance = new DtoConverter();
 
@@ -86,37 +87,37 @@ public class DtoConverter {
 		dto.setTagName(entity.getName());
 		return dto;
 	}
-	
+
 	/**
 	 * Convert certificates.
 	 *
 	 * @param list the list
 	 * @return the list
 	 */
-	public List<GiftCertificateDto> convertCertificates(List<GiftCertificate> list){
+	public List<GiftCertificateDto> convertCertificates(List<GiftCertificate> list) {
 		return list.stream().map(this::convertGiftCertificate).toList();
 	}
-	
+
 	/**
 	 * Convert tags.
 	 *
 	 * @param list the list
 	 * @return the list
 	 */
-	public List<TagDto> convertTags(List<Tag> list){
+	public List<TagDto> convertTags(List<Tag> list) {
 		return list.stream().map(this::convertTag).toList();
 	}
-	
+
 	/**
 	 * Convert certs with tags.
 	 *
 	 * @param list the list
 	 * @return the list
 	 */
-	public List<CertificateWithTagDto> convertCertsWithTags(List<CertificateWithTag> list){
+	public List<CertificateWithTagDto> convertCertsWithTags(List<CertificateWithTag> list) {
 		return list.stream().map(this::convertCertWithTag).toList();
 	}
-	
+
 	public UserDto convertUser(User user) {
 		UserDto dto = new UserDto();
 		dto.setUserId(user.getUserId());
@@ -124,8 +125,25 @@ public class DtoConverter {
 		dto.setUserSurname(user.getUserSurname());
 		return dto;
 	}
-	
-	public List<UserDto> convertUserList(List<User> userList){
+
+	public List<UserDto> convertUserList(List<User> userList) {
 		return userList.stream().map(this::convertUser).toList();
+	}
+
+	public OrderDto convertOrder(Order order) {
+		OrderDto dto = new OrderDto();
+		dto.setOrderId(order.getOrderId());
+		dto.setUserId(order.getUserId());
+		dto.setUserName(order.getUserName());
+		dto.setUserSurname(order.getUserSurname());
+		dto.setCertificateName(order.getCertificateName());
+		dto.setCertificateDescription(order.getCertificateDescription());
+		dto.setPrice(order.getPrice());
+		dto.setPurchaseDate(order.getPurchaseDate());
+		return dto;
+	}
+	
+	public List<OrderDto> convertOrderList(List<Order> orderList){
+		return orderList.stream().map(this::convertOrder).toList();
 	}
 }

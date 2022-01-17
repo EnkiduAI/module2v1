@@ -9,7 +9,9 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import com.epam.esm.model.dao.UserDao;
+import com.epam.esm.model.entity.Tag;
 import com.epam.esm.model.entity.User;
+import com.epam.esm.model.entity.mapper.TagMapper;
 
 @Repository
 public class JdbcTemplateUserDaoImpl implements UserDao {
@@ -23,6 +25,20 @@ public class JdbcTemplateUserDaoImpl implements UserDao {
 			from users
 			where user_id = ?
 			""";
+	private static final String FIND_MOST_POPULAR_TAG = """
+						select tag.id, tag_name
+						from certificates.order
+						join gift_certificate_has_tag on gift_certificate_has_tag.gift_certificate_id = id_certificate
+						join tag on tag.id = gift_certificate_has_tag.tag_id
+						where id_user = (select id_user
+						from certificates.order
+						group by id_user
+						order by sum(certificates.order.price) desc
+						limit 1)
+						group by tag_name
+						order by count(tag_id) desc
+						limit 1
+						""";
 
 	JdbcTemplate jdbcTemplate;
 
@@ -45,4 +61,8 @@ public class JdbcTemplateUserDaoImpl implements UserDao {
 		}
 	}
 
+	@Override
+	public Tag findMostPopularTag() {
+		return jdbcTemplate.queryForObject(FIND_MOST_POPULAR_TAG, new TagMapper());
+	}
 }

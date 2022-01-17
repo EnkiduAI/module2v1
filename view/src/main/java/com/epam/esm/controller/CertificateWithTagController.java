@@ -3,6 +3,9 @@ package com.epam.esm.controller;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+
+import javax.ws.rs.QueryParam;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
@@ -18,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.epam.esm.dto.CertificateWithTagDto;
 import com.epam.esm.dto.converter.DtoConverter;
+import com.epam.esm.dto.pagination.DtoPagination;
 import com.epam.esm.exception.ServiceException;
 import com.epam.esm.model.entity.CertificateWithTag;
 import com.epam.esm.model.entity.GiftCertificate;
@@ -27,6 +31,8 @@ import com.epam.esm.model.service.impl.CertificateServiceImpl;
 @ComponentScan(basePackages = { "com.epam.esm" })
 @RequestMapping("/view/api/certificateWithTag")
 public class CertificateWithTagController {
+
+	private DtoPagination<CertificateWithTagDto> pagination = new DtoPagination<>();
 
 	/** Converter. */
 	private DtoConverter converter = DtoConverter.getInstance();
@@ -43,31 +49,45 @@ public class CertificateWithTagController {
 	 */
 	@GetMapping
 	@ResponseBody
-	public ResponseEntity<List<CertificateWithTagDto>> getCertificatesWithTags() {
+	public ResponseEntity<List<CertificateWithTagDto>> getCertificatesWithTags(
+			@QueryParam("page") Optional<Integer> page, @QueryParam("limit") Optional<Integer> limit) {
 		List<CertificateWithTag> cwt = new ArrayList<>();
 		try {
 			cwt = service.getCertificatesWithTags();
 		} catch (ServiceException e) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
-		return new ResponseEntity<>(converter.convertCertsWithTags(cwt), HttpStatus.OK);
+		List<CertificateWithTagDto> cwtDto = converter.convertCertsWithTags(cwt);
+		if (page.isPresent() && limit.isPresent()) {
+			return new ResponseEntity<>(pagination.getPage(cwtDto, page.get(), limit.get()), HttpStatus.OK);
+		} else {
+			return new ResponseEntity<>(cwtDto, HttpStatus.OK);
+		}
 	}
 
 	@GetMapping("/tag/{name}")
 	@ResponseBody
 	public ResponseEntity<List<CertificateWithTagDto>> getCertificatesWithTagByTagname(
-			@PathVariable(name = "name", required = false) String tagName) {
+			@PathVariable(name = "name", required = false) String tagName, @QueryParam("page") Optional<Integer> page,
+			@QueryParam("limit") Optional<Integer> limit) {
 		List<CertificateWithTag> cwt = new ArrayList<>();
 		try {
 			cwt = service.getCertificatesWithTagsByTagname(tagName);
 		} catch (ServiceException e) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
-		return new ResponseEntity<>(converter.convertCertsWithTags(cwt), HttpStatus.OK);
+		List<CertificateWithTagDto> cwtDto = converter.convertCertsWithTags(cwt);
+		if (page.isPresent() && limit.isPresent()) {
+			return new ResponseEntity<>(pagination.getPage(cwtDto, page.get(), limit.get()), HttpStatus.OK);
+		} else {
+			return new ResponseEntity<>(cwtDto, HttpStatus.OK);
+		}
 	}
 
 	@GetMapping("/tags/{tag}")
-	public ResponseEntity<List<CertificateWithTagDto>> getCertificatesByMultipleTags(@PathVariable("tag") List<String> tags) {
+	public ResponseEntity<List<CertificateWithTagDto>> getCertificatesByMultipleTags(
+			@PathVariable("tag") List<String> tags, @QueryParam("page") Optional<Integer> page,
+			@QueryParam("limit") Optional<Integer> limit) {
 		List<CertificateWithTag> certificatesList = new ArrayList<>();
 		List<CertificateWithTag> freshElements = new ArrayList<>();
 		try {
@@ -78,75 +98,108 @@ public class CertificateWithTagController {
 		} catch (ServiceException e) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
-		return new ResponseEntity<>(converter.convertCertsWithTags(certificatesList),HttpStatus.OK);
+		List<CertificateWithTagDto> cwtDto = converter.convertCertsWithTags(certificatesList);
+		if (page.isPresent() && limit.isPresent()) {
+			return new ResponseEntity<>(pagination.getPage(cwtDto, page.get(), limit.get()), HttpStatus.OK);
+		} else {
+			return new ResponseEntity<>(cwtDto, HttpStatus.OK);
+		}
 	}
 
 	@GetMapping("/tag/{name}/{sortType}")
 	@ResponseBody
 	public ResponseEntity<List<CertificateWithTagDto>> getCertificatesWithTagByTagnameSorted(
-			@PathVariable("name") String tagName, @PathVariable("sortType") String sortType) {
+			@PathVariable("name") String tagName, @PathVariable("sortType") String sortType,
+			@QueryParam("page") Optional<Integer> page, @QueryParam("limit") Optional<Integer> limit) {
 		List<CertificateWithTag> cwt = new ArrayList<>();
 		try {
 			cwt = service.getCertificatesWithTagsByTagnameSorted(tagName, sortType);
 		} catch (ServiceException e) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
-		return new ResponseEntity<>(converter.convertCertsWithTags(cwt), HttpStatus.OK);
+		List<CertificateWithTagDto> cwtDto = converter.convertCertsWithTags(cwt);
+		if (page.isPresent() && limit.isPresent()) {
+			return new ResponseEntity<>(pagination.getPage(cwtDto, page.get(), limit.get()), HttpStatus.OK);
+		} else {
+			return new ResponseEntity<>(cwtDto, HttpStatus.OK);
+		}
 	}
 
 	@GetMapping("/certificate/{name}")
 	@ResponseBody
 	public ResponseEntity<List<CertificateWithTagDto>> getCertificatesWithTagByCertificate(
-			@PathVariable("name") String certificateName) {
+			@PathVariable("name") String certificateName, @QueryParam("page") Optional<Integer> page,
+			@QueryParam("limit") Optional<Integer> limit) {
 		List<CertificateWithTag> cwt = new ArrayList<>();
 		try {
 			cwt = service.getCertificatesWithTagsByCertificate(certificateName);
 		} catch (ServiceException e) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
-		return new ResponseEntity<>(converter.convertCertsWithTags(cwt), HttpStatus.OK);
+		List<CertificateWithTagDto> cwtDto = converter.convertCertsWithTags(cwt);
+		if (page.isPresent() && limit.isPresent()) {
+			return new ResponseEntity<>(pagination.getPage(cwtDto, page.get(), limit.get()), HttpStatus.OK);
+		} else {
+			return new ResponseEntity<>(cwtDto, HttpStatus.OK);
+		}
 	}
 
 	@GetMapping("/certificate/{name}/{sortType}")
 	@ResponseBody
 	public ResponseEntity<List<CertificateWithTagDto>> getCertificatesWithTagByCertificateSorted(
-
-			@PathVariable("name") String certificateName, @PathVariable("sortType") String sortType) {
+			@PathVariable("name") String certificateName, @PathVariable("sortType") String sortType,
+			@QueryParam("page") Optional<Integer> page, @QueryParam("limit") Optional<Integer> limit) {
 		List<CertificateWithTag> cwt = new ArrayList<>();
 		try {
 			cwt = service.getCertificatesWithTagsByCertificateSorted(certificateName, sortType);
 		} catch (ServiceException e) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
-		return new ResponseEntity<>(converter.convertCertsWithTags(cwt), HttpStatus.OK);
+		List<CertificateWithTagDto> cwtDto = converter.convertCertsWithTags(cwt);
+		if (page.isPresent() && limit.isPresent()) {
+			return new ResponseEntity<>(pagination.getPage(cwtDto, page.get(), limit.get()), HttpStatus.OK);
+		} else {
+			return new ResponseEntity<>(cwtDto, HttpStatus.OK);
+		}
 	}
 
 	@GetMapping("/{tagName}/{certificateName}")
 	@ResponseBody
 	public ResponseEntity<List<CertificateWithTagDto>> getCertificatesWithTagByCertificateAndTagname(
-
-			@PathVariable("certificateName") String certificateName, @PathVariable("tagName") String tagName) {
+			@PathVariable("certificateName") String certificateName, @PathVariable("tagName") String tagName,
+			@QueryParam("page") Optional<Integer> page, @QueryParam("limit") Optional<Integer> limit) {
 		List<CertificateWithTag> cwt = new ArrayList<>();
 		try {
 			cwt = service.getCertificatesWithTagsByCertificateAndTagname(tagName, certificateName);
 		} catch (ServiceException e) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
-		return new ResponseEntity<>(converter.convertCertsWithTags(cwt), HttpStatus.OK);
+		List<CertificateWithTagDto> cwtDto = converter.convertCertsWithTags(cwt);
+		if (page.isPresent() && limit.isPresent()) {
+			return new ResponseEntity<>(pagination.getPage(cwtDto, page.get(), limit.get()), HttpStatus.OK);
+		} else {
+			return new ResponseEntity<>(cwtDto, HttpStatus.OK);
+		}
 	}
 
 	@GetMapping("/{tagName}/{certificateName}/{sortType}")
 	@ResponseBody
 	public ResponseEntity<List<CertificateWithTagDto>> getCertificatesWithTagByCertificateAndTagname(
 			@PathVariable("tagName") String tagName, @PathVariable("certificateName") String certificateName,
-			@PathVariable("sortType") String sortType) {
+			@PathVariable("sortType") String sortType, @QueryParam("page") Optional<Integer> page,
+			@QueryParam("limit") Optional<Integer> limit) {
 		List<CertificateWithTag> cwt = new ArrayList<>();
 		try {
 			cwt = service.getCertificatesWithTagsByCertificateAndTagnameSorted(tagName, certificateName, sortType);
 		} catch (ServiceException e) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
-		return new ResponseEntity<>(converter.convertCertsWithTags(cwt), HttpStatus.OK);
+		List<CertificateWithTagDto> cwtDto = converter.convertCertsWithTags(cwt);
+		if (page.isPresent() && limit.isPresent()) {
+			return new ResponseEntity<>(pagination.getPage(cwtDto, page.get(), limit.get()), HttpStatus.OK);
+		} else {
+			return new ResponseEntity<>(cwtDto, HttpStatus.OK);
+		}
 	}
 
 	/**

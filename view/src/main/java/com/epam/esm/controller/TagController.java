@@ -2,6 +2,8 @@ package com.epam.esm.controller;
 
 import java.util.List;
 
+import javax.ws.rs.QueryParam;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.HttpStatus;
@@ -17,14 +19,18 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.epam.esm.dto.TagDto;
 import com.epam.esm.dto.converter.DtoConverter;
+import com.epam.esm.dto.pagination.DtoPagination;
 import com.epam.esm.exception.ServiceException;
 import com.epam.esm.model.entity.Tag;
 import com.epam.esm.model.service.impl.TagServiceImpl;
+import java.util.Optional;
 
 @RestController
 @ComponentScan(basePackages = { "com.epam.esm" })
 @RequestMapping("/view/api/tags")
 public class TagController {
+
+	private DtoPagination<TagDto> pagination = new DtoPagination<>();
 
 	/** Converter. */
 	private DtoConverter converter = DtoConverter.getInstance();
@@ -32,7 +38,7 @@ public class TagController {
 	/** Service. */
 	@Autowired
 	private TagServiceImpl service;
-	
+
 	/**
 	 * Gets all tags.
 	 *
@@ -41,11 +47,19 @@ public class TagController {
 	 */
 	@GetMapping
 	@ResponseBody
-	public ResponseEntity<List<TagDto>> getAllTags() throws ServiceException {
+	public ResponseEntity<List<TagDto>> getAllTags(@QueryParam("page") Optional<Integer> page,
+			@QueryParam("limit") Optional<Integer> limit) throws ServiceException {
 		List<Tag> tags = service.findAllTags();
-		return new ResponseEntity<>(converter.convertTags(tags), HttpStatus.OK);
+		List<TagDto> tagsDto = converter.convertTags(tags);
+		if (page.isPresent() && limit.isPresent()) {
+			return new ResponseEntity<>(pagination.getPage(tagsDto, page.get(), limit.get()),
+					HttpStatus.OK);
+		}else {
+			return new ResponseEntity<>(tagsDto,
+					HttpStatus.OK);
+		}
 	}
-	
+
 	/**
 	 * Gets tag by id.
 	 *
@@ -64,7 +78,7 @@ public class TagController {
 		}
 		return new ResponseEntity<>(converter.convertTag(tag), HttpStatus.OK);
 	}
-	
+
 	/**
 	 * Creates tag.
 	 *
@@ -83,7 +97,7 @@ public class TagController {
 
 		return new ResponseEntity<>(converter.convertTag(tagToCreate), HttpStatus.OK);
 	}
-	
+
 	/**
 	 * Delete tag.
 	 *

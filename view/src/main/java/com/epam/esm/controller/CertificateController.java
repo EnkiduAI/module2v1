@@ -2,6 +2,9 @@ package com.epam.esm.controller;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+
+import javax.ws.rs.QueryParam;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
@@ -20,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.epam.esm.dto.GiftCertificateDto;
 import com.epam.esm.dto.converter.DtoConverter;
+import com.epam.esm.dto.pagination.DtoPagination;
 import com.epam.esm.exception.ServiceException;
 import com.epam.esm.model.entity.GiftCertificate;
 import com.epam.esm.model.service.impl.CertificateServiceImpl;
@@ -29,13 +33,15 @@ import com.epam.esm.model.service.impl.CertificateServiceImpl;
 @RequestMapping("/view/api/certificates")
 public class CertificateController {
 
+	private DtoPagination<GiftCertificateDto> pagination = new DtoPagination<>();
+
 	/** Converter. */
 	private DtoConverter converter = DtoConverter.getInstance();
 
 	/** Service. */
 	@Autowired
 	private CertificateServiceImpl service;
-	
+
 	/**
 	 * Gets all certificates.
 	 *
@@ -44,8 +50,10 @@ public class CertificateController {
 	 */
 	@GetMapping
 	@ResponseBody
-	public ResponseEntity<List<GiftCertificateDto>> getAllCertificates() throws ServiceException {
+	public ResponseEntity<List<GiftCertificateDto>> getAllCertificates(@QueryParam("page") Optional<Integer> page,
+			@QueryParam("limit") Optional<Integer> limit) throws ServiceException {
 		List<GiftCertificate> giftCertificates;
+		List<GiftCertificateDto> certificatesDto;
 		try {
 			giftCertificates = service.findAllCertificates();
 
@@ -53,9 +61,14 @@ public class CertificateController {
 			throw new ServiceException("Can't find certificates");
 
 		}
-		return new ResponseEntity<>(converter.convertCertificates(giftCertificates), HttpStatus.OK);
+		certificatesDto = converter.convertCertificates(giftCertificates);
+		if (page.isPresent() && limit.isPresent()) {		
+			return new ResponseEntity<>(pagination.getPage(certificatesDto, page.get(), limit.get()), HttpStatus.OK);
+		}else {
+			return new ResponseEntity<>(certificatesDto, HttpStatus.OK);
+		}
 	}
-	
+
 	/**
 	 * Gets certificate by id.
 	 *
@@ -69,7 +82,7 @@ public class CertificateController {
 		GiftCertificate certificate = service.findCertificateById(id);
 		return new ResponseEntity<>(converter.convertGiftCertificate(certificate), HttpStatus.OK);
 	}
-	
+
 	/**
 	 * Creates certificate.
 	 *
@@ -88,7 +101,7 @@ public class CertificateController {
 		}
 		return new ResponseEntity<>(converter.convertGiftCertificate(certificate), HttpStatus.OK);
 	}
-	
+
 	/**
 	 * Update gift certificate.
 	 *
@@ -122,7 +135,7 @@ public class CertificateController {
 		}
 		return new ResponseEntity<>(converter.convertGiftCertificate(updated), HttpStatus.OK);
 	}
-	
+
 	/**
 	 * Delete certificate.
 	 *

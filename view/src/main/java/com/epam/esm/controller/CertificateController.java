@@ -1,5 +1,7 @@
 package com.epam.esm.controller;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -56,17 +58,21 @@ public class CertificateController {
 		List<GiftCertificateDto> certificatesDto;
 		try {
 			giftCertificates = service.findAllCertificates();
-
 		} catch (ServiceException e) {
 			throw new ServiceException("Can't find certificates");
-
 		}
 		certificatesDto = converter.convertCertificates(giftCertificates);
-		if (page.isPresent() && limit.isPresent()) {		
-			return new ResponseEntity<>(pagination.getPage(certificatesDto, page.get(), limit.get()), HttpStatus.OK);
-		}else {
-			return new ResponseEntity<>(certificatesDto, HttpStatus.OK);
+		for (GiftCertificateDto certificate : certificatesDto) {
+			certificate.add(linkTo(methodOn(CertificateController.class).getCertificateById(certificate.getId()))
+					.withSelfRel());
+			certificate.add(linkTo(methodOn(CertificateWithTagController.class)
+					.getCertificatesWithTagByCertificate(certificate.getName(), page, limit))
+							.withRel("certificate with tag"));
 		}
+		if (page.isPresent() && limit.isPresent()) {
+			certificatesDto = pagination.getPage(certificatesDto, page.get(), limit.get());
+		}
+		return new ResponseEntity<>(certificatesDto, HttpStatus.OK);
 	}
 
 	/**
@@ -80,7 +86,11 @@ public class CertificateController {
 	@ResponseBody
 	public ResponseEntity<GiftCertificateDto> getCertificateById(@PathVariable("id") int id) throws ServiceException {
 		GiftCertificate certificate = service.findCertificateById(id);
-		return new ResponseEntity<>(converter.convertGiftCertificate(certificate), HttpStatus.OK);
+		GiftCertificateDto certificateDto = converter.convertGiftCertificate(certificate);
+		certificateDto
+				.add(linkTo(methodOn(CertificateController.class).getAllCertificates(Optional.of(1), Optional.of(5)))
+						.withRel("all certificates"));
+		return new ResponseEntity<>(certificateDto, HttpStatus.OK);
 	}
 
 	/**
@@ -91,7 +101,7 @@ public class CertificateController {
 	 */
 	@PostMapping
 	@ResponseBody
-	public ResponseEntity<GiftCertificateDto> createCertificate(@RequestBody Map<String, Object> fields) {
+	public ResponseEntity<GiftCertificateDto> createCertificate(@RequestBody Map<String, Object> fields) throws ServiceException{
 		GiftCertificate certificate = new GiftCertificate();
 		try {
 			certificate = service.createCertificate(fields.get("name").toString(), fields.get("description").toString(),
@@ -99,7 +109,13 @@ public class CertificateController {
 		} catch (ServiceException e) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
-		return new ResponseEntity<>(converter.convertGiftCertificate(certificate), HttpStatus.OK);
+		GiftCertificateDto certificateDto = converter.convertGiftCertificate(certificate);
+		certificateDto.add(linkTo(methodOn(CertificateController.class).getCertificateById(certificateDto.getId()))
+				.withRel("get certificate"));
+		certificateDto
+				.add(linkTo(methodOn(CertificateController.class).getAllCertificates(Optional.of(1), Optional.of(5)))
+						.withRel("get all"));
+		return new ResponseEntity<>(certificateDto, HttpStatus.OK);
 	}
 
 	/**

@@ -2,7 +2,9 @@ package com.epam.esm.dto;
 
 import java.time.LocalDateTime;
 
-public class OrderDto {
+import org.springframework.hateoas.RepresentationModel;
+
+public class OrderDto extends RepresentationModel<OrderDto>{
 	private int orderId;
 	private int userId;
 	private String userName;

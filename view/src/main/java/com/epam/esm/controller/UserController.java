@@ -1,5 +1,6 @@
 package com.epam.esm.controller;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -48,23 +49,27 @@ public class UserController {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
 		List<UserDto> userDto = converter.convertUserList(userList);
-		if(page.isPresent() && limit.isPresent()) {
-			return new ResponseEntity<>(pagination.getPage(userDto, page.get(), limit.get()), HttpStatus.OK);
-		}else {
-			return new ResponseEntity<>(userDto, HttpStatus.OK);
+		if (page.isPresent() && limit.isPresent()) {
+			userDto = pagination.getPage(userDto, page.get(), limit.get());
 		}
+		for (UserDto user : userDto) {
+			user.add(linkTo(methodOn(UserController.class).findUserById(user.getUserId())).withSelfRel());
+		}
+		return new ResponseEntity<>(userDto, HttpStatus.OK);
 	}
 
 	@GetMapping("/{id}")
 	@ResponseBody
-	public ResponseEntity<UserDto> findUserById(@PathVariable("id") int id) {
+	public ResponseEntity<UserDto> findUserById(@PathVariable("id") int id) throws ServiceException{
 		User user = new User();
 		try {
 			user = service.findById(id);
 		} catch (ServiceException e) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
-		return new ResponseEntity<>(converter.convertUser(user), HttpStatus.OK);
+		UserDto userDto = converter.convertUser(user);
+		userDto.add(linkTo(methodOn(UserController.class).findAllUsers(Optional.of(1), Optional.of(5))).withRel("find all users"));
+		return new ResponseEntity<>(userDto, HttpStatus.OK);
 	}
 
 	@GetMapping("/popular/tag")

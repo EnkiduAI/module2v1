@@ -1,5 +1,8 @@
 package com.epam.esm.controller;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -33,7 +36,7 @@ public class OrderController {
 	private OrderServiceImpl service;
 
 	private DtoPagination<OrderDto> pagination = new DtoPagination<>();
-	
+
 	private DtoConverter converter = DtoConverter.getInstance();
 
 	@PostMapping("/user/{userId}/certificate/{certificateId}")
@@ -59,7 +62,10 @@ public class OrderController {
 		} catch (ServiceException e) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
-		return new ResponseEntity<>(converter.convertOrder(order), HttpStatus.OK);
+		OrderDto orderDto = converter.convertOrder(order);
+		orderDto.add(linkTo(methodOn(OrderController.class).getOrdersOfUser(userId, Optional.of(1), Optional.of(5)))
+				.withRel("get user orders"));
+		return new ResponseEntity<>(orderDto, HttpStatus.OK);
 	}
 
 	@GetMapping("/user/{userId}")
@@ -74,10 +80,13 @@ public class OrderController {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
 		List<OrderDto> orderDto = converter.convertOrderList(orderList);
-		if(page.isPresent() && limit.isPresent()) {
-			return new ResponseEntity<>(pagination.getPage(orderDto, page.get(), limit.get()), HttpStatus.OK);
-		}else {
-			return new ResponseEntity<>(orderDto, HttpStatus.OK);
+		if (page.isPresent() && limit.isPresent()) {
+			orderDto = pagination.getPage(orderDto, page.get(), limit.get());
 		}
+		for (OrderDto order : orderDto) {
+			order.add(linkTo(methodOn(OrderController.class).findOrderById(userId, order.getOrderId()))
+					.withRel("get order"));
+		}
+		return new ResponseEntity<>(orderDto,HttpStatus.OK);
 	}
 }

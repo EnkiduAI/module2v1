@@ -52,6 +52,7 @@ dependencies {
 	 implementation 'org.apache.tomcat:tomcat:9.0.56'
 	 implementation 'javax.ws.rs:javax.ws.rs-api:2.1.1'
 	 implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.13.0'
+	 implementation 'org.springframework.boot:spring-boot-starter-hateoas:2.6.2'
      implementation project(':service')
      implementation project(':dao')
      implementation project(':domen')

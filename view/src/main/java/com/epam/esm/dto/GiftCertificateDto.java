@@ -1,8 +1,9 @@
 package com.epam.esm.dto;
-
 import java.time.LocalDateTime;
 
-public class GiftCertificateDto {
+import org.springframework.hateoas.RepresentationModel;
+
+public class GiftCertificateDto extends RepresentationModel<GiftCertificateDto>{
 	private int id;
 	private String name;
 	private String description;

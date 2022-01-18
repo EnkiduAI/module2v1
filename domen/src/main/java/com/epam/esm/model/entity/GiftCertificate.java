@@ -1,7 +1,6 @@
 package com.epam.esm.model.entity;
 
 import java.time.LocalDateTime;
-
 import org.springframework.stereotype.Component;
 
 @Component
@@ -15,11 +14,11 @@ public class GiftCertificate {
 	private LocalDateTime lastUpdateDate;
 
 	public GiftCertificate() {
-		
+
 	}
 
-	public GiftCertificate(int id, String name, String description, int price, String duration, LocalDateTime createDate,
-			LocalDateTime lastUpdateDate) {
+	public GiftCertificate(int id, String name, String description, int price, String duration,
+			LocalDateTime createDate, LocalDateTime lastUpdateDate) {
 		this.id = id;
 		this.name = name;
 		this.description = description;

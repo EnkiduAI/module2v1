@@ -1,9 +1,8 @@
 package com.epam.esm.controller;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 import java.util.List;
-
 import javax.ws.rs.QueryParam;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.HttpStatus;
@@ -52,12 +51,12 @@ public class TagController {
 		List<Tag> tags = service.findAllTags();
 		List<TagDto> tagsDto = converter.convertTags(tags);
 		if (page.isPresent() && limit.isPresent()) {
-			return new ResponseEntity<>(pagination.getPage(tagsDto, page.get(), limit.get()),
-					HttpStatus.OK);
-		}else {
-			return new ResponseEntity<>(tagsDto,
-					HttpStatus.OK);
+			tagsDto = pagination.getPage(tagsDto, page.get(), limit.get());
 		}
+		for(TagDto tag : tagsDto) {
+			tag.add(linkTo(methodOn(TagController.class).getTagById(tag.getTagId())).withSelfRel());
+		}
+		return new ResponseEntity<>(tagsDto,HttpStatus.OK);
 	}
 
 	/**
@@ -76,7 +75,9 @@ public class TagController {
 		} catch (ServiceException e) {
 			throw new ServiceException("Tag with id:=" + id + " not found");
 		}
-		return new ResponseEntity<>(converter.convertTag(tag), HttpStatus.OK);
+		TagDto tagDto = converter.convertTag(tag);
+		tagDto.add(linkTo(methodOn(TagController.class).getAllTags(Optional.of(1), Optional.of(5))).withRel("get all tags"));
+		return new ResponseEntity<>(tagDto, HttpStatus.OK);
 	}
 
 	/**

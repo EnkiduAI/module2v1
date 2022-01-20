@@ -1,16 +1,30 @@
 package com.epam.esm.model.entity;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
-import org.springframework.stereotype.Component;
 
-@Component
-public class GiftCertificate {
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "gift_certificate")
+public class GiftCertificate implements Serializable{
+	private static final long serialVersionUID = 1L;
+	
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	private int id;
 	private String name;
 	private String description;
 	private int price;
 	private String duration;
+	@Column(name = "create_date")
 	private LocalDateTime createDate;
+	@Column(name = "last_update_date")
 	private LocalDateTime lastUpdateDate;
 
 	public GiftCertificate() {

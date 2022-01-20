@@ -1,10 +1,21 @@
 package com.epam.esm.model.entity;
 
-import org.springframework.stereotype.Component;
-
-@Component
-public class Tag {
+import java.io.Serializable;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+@Entity
+@Table(name = "tag")
+public class Tag implements Serializable{
+	private static final long serialVersionUID = 1L;
+	
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
+	@Column(name = "tag_name")
 	private String name;
 	
 	public Tag() {

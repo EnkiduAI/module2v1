@@ -7,17 +7,17 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.epam.esm.exception.ServiceException;
-import com.epam.esm.model.dao.impl.JdbcTemplateTagDaoImpl;
 import com.epam.esm.model.entity.Tag;
 import com.epam.esm.model.service.TagService;
+import com.epam.esm.persistence.impl.TagPersistenceImpl;
 
 @Service
 public class TagServiceImpl implements TagService {
 
-	private JdbcTemplateTagDaoImpl tagDao;
+	private TagPersistenceImpl tagDao;
 
 	@Autowired
-	public TagServiceImpl(JdbcTemplateTagDaoImpl tagDao) {
+	public TagServiceImpl(TagPersistenceImpl tagDao) {
 		this.tagDao = tagDao;
 	}
 

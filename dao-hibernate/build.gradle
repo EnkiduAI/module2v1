@@ -55,6 +55,8 @@ dependencies {
   implementation 'org.springframework:spring-beans:5.3.14'
   implementation 'org.springframework:spring-context:5.3.14'
   implementation 'org.springframework:spring-jdbc:5.3.14'
+  implementation 'org.hibernate:hibernate-core:5.4.2.Final'
+  implementation 'org.springframework:spring-orm:5.3.15'
   implementation project(':domen')
  
   

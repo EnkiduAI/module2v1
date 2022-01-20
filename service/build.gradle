@@ -51,6 +51,7 @@ dependencies {
   implementation 'org.springframework:spring-jdbc:5.3.14'
   implementation project(':domen')
   implementation project(':dao')
+  implementation project(':dao-hibernate')
   
 }
 

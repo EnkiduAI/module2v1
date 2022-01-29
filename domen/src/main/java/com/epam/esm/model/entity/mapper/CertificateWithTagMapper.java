@@ -12,9 +12,9 @@ public class CertificateWithTagMapper implements RowMapper<CertificateWithTag>{
 	@Override
 	public CertificateWithTag mapRow(ResultSet rs, int rowNum) throws SQLException {
 		CertificateWithTag certTag = new CertificateWithTag();
-		certTag.setTagId(rs.getInt("t.id"));
+		certTag.setTagId(rs.getInt("t.id_tag"));
 		certTag.setTagName(rs.getString("t.tag_name"));
-		certTag.setCertificateId(rs.getInt("gc.id"));
+		certTag.setCertificateId(rs.getInt("gc.cert_id"));
 		certTag.setCertificateName(rs.getString("gc.name"));
 		certTag.setDescription(rs.getString("gc.description"));
 		certTag.setPrice(rs.getInt("gc.price"));

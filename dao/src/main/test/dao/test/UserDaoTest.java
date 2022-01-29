@@ -23,7 +23,7 @@ class UserDaoTest {
 	
 	@Test
 	void findAllTest() {
-		List<User> expected = userDao.findAll();
+		List<User> expected = userDao.findAll(1,5);
 		assertNotNull(expected);
 	}
 	

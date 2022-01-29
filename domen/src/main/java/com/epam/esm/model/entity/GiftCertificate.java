@@ -2,22 +2,28 @@ package com.epam.esm.model.entity;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 @Entity
 @Table(name = "gift_certificate")
-public class GiftCertificate implements Serializable{
+public class GiftCertificate implements Serializable {
 	private static final long serialVersionUID = 1L;
-	
+
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private int id;
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name ="cert_id")
+	private int certificateId;
 	private String name;
 	private String description;
 	private int price;
@@ -26,6 +32,12 @@ public class GiftCertificate implements Serializable{
 	private LocalDateTime createDate;
 	@Column(name = "last_update_date")
 	private LocalDateTime lastUpdateDate;
+	@ManyToMany
+	@JoinTable(
+			name = "gift_certificate_has_tag",
+			joinColumns = @JoinColumn(name = "gift_certificate_id"),
+			inverseJoinColumns = @JoinColumn(name = "tag_id"))
+	private Set<Tag> tags = new HashSet<>();
 
 	public GiftCertificate() {
 
@@ -33,7 +45,7 @@ public class GiftCertificate implements Serializable{
 
 	public GiftCertificate(int id, String name, String description, int price, String duration,
 			LocalDateTime createDate, LocalDateTime lastUpdateDate) {
-		this.id = id;
+		this.certificateId = id;
 		this.name = name;
 		this.description = description;
 		this.price = price;
@@ -41,13 +53,31 @@ public class GiftCertificate implements Serializable{
 		this.createDate = createDate;
 		this.lastUpdateDate = lastUpdateDate;
 	}
+	
+	public void addTag(Tag tag) {
+		this.tags.add(tag);
+		tag.getGiftCertificates().add(this);
+	}
+	
+	public void removeTag(Tag tag) {
+		this.tags.remove(tag);
+		tag.getGiftCertificates().remove(this);
+	}
+	
+	public Set<Tag> getTags() {
+		return tags;
+	}
+
+	public void setTags(Set<Tag> tags) {
+		this.tags = tags;
+	}
 
 	public int getId() {
-		return id;
+		return certificateId;
 	}
 
 	public void setId(int id) {
-		this.id = id;
+		this.certificateId = id;
 	}
 
 	public String getName() {
@@ -105,7 +135,7 @@ public class GiftCertificate implements Serializable{
 		result = prime * result + ((createDate == null) ? 0 : createDate.hashCode());
 		result = prime * result + ((description == null) ? 0 : description.hashCode());
 		result = prime * result + ((duration == null) ? 0 : duration.hashCode());
-		result = prime * result + id;
+		result = prime * result + certificateId;
 		result = prime * result + ((lastUpdateDate == null) ? 0 : lastUpdateDate.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		result = prime * result + price;
@@ -136,7 +166,7 @@ public class GiftCertificate implements Serializable{
 				return false;
 		} else if (!duration.equals(other.duration))
 			return false;
-		if (id != other.id)
+		if (certificateId != other.certificateId)
 			return false;
 		if (lastUpdateDate == null) {
 			if (other.lastUpdateDate != null)
@@ -157,7 +187,7 @@ public class GiftCertificate implements Serializable{
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		builder.append("GiftCertificate [id=");
-		builder.append(id);
+		builder.append(certificateId);
 		builder.append(", name=");
 		builder.append(name);
 		builder.append(", description=");

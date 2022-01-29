@@ -40,15 +40,15 @@ public class ProjectServiceTest {
 
 	@Test
 	protected void findCertificates() throws ServiceException {
-		when(service.findAllCertificates()).thenReturn(certificates);
-		List<GiftCertificate> expected = service.findAllCertificates();
+		when(service.findAllCertificates(1, 5)).thenReturn(certificates);
+		List<GiftCertificate> expected = service.findAllCertificates(1, 5);
 		assertEquals(expected, certificates);
 	}
 	
 	@Test
 	protected void findCertficatesWithTags() throws ServiceException {
-		when(service.getCertificatesWithTags()).thenReturn(certsWithTags);
-		List<CertificateWithTag> expected = service.getCertificatesWithTags();
+		when(service.getCertificatesWithTags(1, 5)).thenReturn(certsWithTags);
+		List<CertificateWithTag> expected = service.getCertificatesWithTags(1, 5);
 		assertEquals(expected, certsWithTags);
 	}
 	

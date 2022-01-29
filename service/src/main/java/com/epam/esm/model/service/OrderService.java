@@ -8,7 +8,7 @@ import com.epam.esm.model.entity.Order;
 public interface OrderService {
 	Order createOrder(int userId, int certificateId) throws ServiceException;
 
-	List<Order> findAllUserOrders(int userId) throws ServiceException;
+	List<Order> findAllUserOrders(int userId, int page, int limit) throws ServiceException;
 
 	Order findUserOrderById(int userId, int orderId) throws ServiceException;
 }

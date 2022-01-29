@@ -1,32 +1,40 @@
 package com.epam.esm.model.entity;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
-import org.springframework.stereotype.Component;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
-@Component
-public class Order {
-	private int orderId;
-	private int userId;
-	private String userName;
-	private String userSurname;
-	private String certificateName;
-	private String certificateDescription;
-	private int price;
-	private LocalDateTime purchaseDate;
+@Entity
+@Table(name = "orders")
+public class Order implements Serializable{
+	private static final long serialVersionUID = 1L;
 	
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "id_order")
+	private int orderId;
+	@Column(name = "id_user")
+	private int idUser;
+	@Column(name = "id_certificate")
+	private int idCertificate;
+	private int price;
+	@Column(name = "purchase_date")
+	private LocalDateTime purchaseDate;
+
 	public Order() {
-		
+
 	}
 
-	public Order(int orderId, int userId, String userName, String userSurname, String certificateName,
-			String certificateDescription, int price, LocalDateTime purchaseDate) {
+	public Order(int orderId, int idUser, int idCertificate, int price, LocalDateTime purchaseDate) {
 		this.orderId = orderId;
-		this.userId = userId;
-		this.userName = userName;
-		this.userSurname = userSurname;
-		this.certificateName = certificateName;
-		this.certificateDescription = certificateDescription;
+		this.idUser = idUser;
+		this.idCertificate = idCertificate;
 		this.price = price;
 		this.purchaseDate = purchaseDate;
 	}
@@ -39,44 +47,20 @@ public class Order {
 		this.orderId = orderId;
 	}
 
-	public int getUserId() {
-		return userId;
+	public int getIdUser() {
+		return idUser;
 	}
 
-	public void setUserId(int userId) {
-		this.userId = userId;
+	public void setIdUser(int idUser) {
+		this.idUser = idUser;
 	}
 
-	public String getUserName() {
-		return userName;
+	public int getIdCertificate() {
+		return idCertificate;
 	}
 
-	public void setUserName(String userName) {
-		this.userName = userName;
-	}
-
-	public String getUserSurname() {
-		return userSurname;
-	}
-
-	public void setUserSurname(String userSurname) {
-		this.userSurname = userSurname;
-	}
-
-	public String getCertificateName() {
-		return certificateName;
-	}
-
-	public void setCertificateName(String certificateName) {
-		this.certificateName = certificateName;
-	}
-
-	public String getCertificateDescription() {
-		return certificateDescription;
-	}
-
-	public void setCertificateDescription(String certificateDescription) {
-		this.certificateDescription = certificateDescription;
+	public void setIdCertificate(int idCertificate) {
+		this.idCertificate = idCertificate;
 	}
 
 	public int getPrice() {
@@ -95,18 +79,19 @@ public class Order {
 		this.purchaseDate = purchaseDate;
 	}
 
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((certificateDescription == null) ? 0 : certificateDescription.hashCode());
-		result = prime * result + ((certificateName == null) ? 0 : certificateName.hashCode());
+		result = prime * result + idCertificate;
+		result = prime * result + idUser;
 		result = prime * result + orderId;
 		result = prime * result + price;
 		result = prime * result + ((purchaseDate == null) ? 0 : purchaseDate.hashCode());
-		result = prime * result + userId;
-		result = prime * result + ((userName == null) ? 0 : userName.hashCode());
-		result = prime * result + ((userSurname == null) ? 0 : userSurname.hashCode());
 		return result;
 	}
 
@@ -119,15 +104,9 @@ public class Order {
 		if (getClass() != obj.getClass())
 			return false;
 		Order other = (Order) obj;
-		if (certificateDescription == null) {
-			if (other.certificateDescription != null)
-				return false;
-		} else if (!certificateDescription.equals(other.certificateDescription))
+		if (idCertificate != other.idCertificate)
 			return false;
-		if (certificateName == null) {
-			if (other.certificateName != null)
-				return false;
-		} else if (!certificateName.equals(other.certificateName))
+		if (idUser != other.idUser)
 			return false;
 		if (orderId != other.orderId)
 			return false;
@@ -138,18 +117,6 @@ public class Order {
 				return false;
 		} else if (!purchaseDate.equals(other.purchaseDate))
 			return false;
-		if (userId != other.userId)
-			return false;
-		if (userName == null) {
-			if (other.userName != null)
-				return false;
-		} else if (!userName.equals(other.userName))
-			return false;
-		if (userSurname == null) {
-			if (other.userSurname != null)
-				return false;
-		} else if (!userSurname.equals(other.userSurname))
-			return false;
 		return true;
 	}
 
@@ -158,16 +125,10 @@ public class Order {
 		StringBuilder builder = new StringBuilder();
 		builder.append("Order [orderId=");
 		builder.append(orderId);
-		builder.append(", userId=");
-		builder.append(userId);
-		builder.append(", userName=");
-		builder.append(userName);
-		builder.append(", userSurname=");
-		builder.append(userSurname);
-		builder.append(", certificateName=");
-		builder.append(certificateName);
-		builder.append(", certificateDescription=");
-		builder.append(certificateDescription);
+		builder.append(", idUser=");
+		builder.append(idUser);
+		builder.append(", idCertificate=");
+		builder.append(idCertificate);
 		builder.append(", price=");
 		builder.append(price);
 		builder.append(", purchaseDate=");

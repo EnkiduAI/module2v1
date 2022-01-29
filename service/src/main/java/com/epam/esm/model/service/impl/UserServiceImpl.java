@@ -6,18 +6,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.epam.esm.exception.ServiceException;
-import com.epam.esm.model.dao.impl.JdbcTemplateUserDaoImpl;
 import com.epam.esm.model.entity.Tag;
 import com.epam.esm.model.entity.User;
 import com.epam.esm.model.service.UserService;
+import com.epam.esm.persistence.impl.UserPersistenceImpl;
 
 @Service
 public class UserServiceImpl implements UserService {
 
-	private JdbcTemplateUserDaoImpl userDao;
+	private UserPersistenceImpl userDao;
 
 	@Autowired
-	public UserServiceImpl(JdbcTemplateUserDaoImpl userDao) {
+	public UserServiceImpl(UserPersistenceImpl userDao) {
 		this.userDao = userDao;
 	}
 
@@ -27,8 +27,8 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public List<User> findAll() throws ServiceException {
-		return userDao.findAll();
+	public List<User> findAll(int page, int limit) throws ServiceException {
+		return userDao.findAll(page, limit);
 	}
 
 	@Override

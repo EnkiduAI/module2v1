@@ -7,10 +7,7 @@ import org.springframework.hateoas.RepresentationModel;
 public class OrderDto extends RepresentationModel<OrderDto>{
 	private int orderId;
 	private int userId;
-	private String userName;
-	private String userSurname;
-	private String certificateName;
-	private String certificateDescription;
+	private int certificateId;
 	private int price;
 	private LocalDateTime purchaseDate;
 	
@@ -18,15 +15,10 @@ public class OrderDto extends RepresentationModel<OrderDto>{
 		
 	}
 
-	public OrderDto(int orderId, int userId, String userName, String userSurname, String certificateName,
-			String certificateDescription, int price, LocalDateTime purchaseDate) {
-		super();
+	public OrderDto(int orderId, int userId, int certificateId, int price, LocalDateTime purchaseDate) {
 		this.orderId = orderId;
 		this.userId = userId;
-		this.userName = userName;
-		this.userSurname = userSurname;
-		this.certificateName = certificateName;
-		this.certificateDescription = certificateDescription;
+		this.certificateId = certificateId;
 		this.price = price;
 		this.purchaseDate = purchaseDate;
 	}
@@ -47,36 +39,12 @@ public class OrderDto extends RepresentationModel<OrderDto>{
 		this.userId = userId;
 	}
 
-	public String getUserName() {
-		return userName;
+	public int getCertificateId() {
+		return certificateId;
 	}
 
-	public void setUserName(String userName) {
-		this.userName = userName;
-	}
-
-	public String getUserSurname() {
-		return userSurname;
-	}
-
-	public void setUserSurname(String userSurname) {
-		this.userSurname = userSurname;
-	}
-
-	public String getCertificateName() {
-		return certificateName;
-	}
-
-	public void setCertificateName(String certificateName) {
-		this.certificateName = certificateName;
-	}
-
-	public String getCertificateDescription() {
-		return certificateDescription;
-	}
-
-	public void setCertificateDescription(String certificateDescription) {
-		this.certificateDescription = certificateDescription;
+	public void setCertificateId(int certificateId) {
+		this.certificateId = certificateId;
 	}
 
 	public int getPrice() {
@@ -98,15 +66,12 @@ public class OrderDto extends RepresentationModel<OrderDto>{
 	@Override
 	public int hashCode() {
 		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((certificateDescription == null) ? 0 : certificateDescription.hashCode());
-		result = prime * result + ((certificateName == null) ? 0 : certificateName.hashCode());
+		int result = super.hashCode();
+		result = prime * result + certificateId;
 		result = prime * result + orderId;
 		result = prime * result + price;
 		result = prime * result + ((purchaseDate == null) ? 0 : purchaseDate.hashCode());
 		result = prime * result + userId;
-		result = prime * result + ((userName == null) ? 0 : userName.hashCode());
-		result = prime * result + ((userSurname == null) ? 0 : userSurname.hashCode());
 		return result;
 	}
 
@@ -114,20 +79,12 @@ public class OrderDto extends RepresentationModel<OrderDto>{
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
-		if (obj == null)
+		if (!super.equals(obj))
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
 		OrderDto other = (OrderDto) obj;
-		if (certificateDescription == null) {
-			if (other.certificateDescription != null)
-				return false;
-		} else if (!certificateDescription.equals(other.certificateDescription))
-			return false;
-		if (certificateName == null) {
-			if (other.certificateName != null)
-				return false;
-		} else if (!certificateName.equals(other.certificateName))
+		if (certificateId != other.certificateId)
 			return false;
 		if (orderId != other.orderId)
 			return false;
@@ -140,16 +97,6 @@ public class OrderDto extends RepresentationModel<OrderDto>{
 			return false;
 		if (userId != other.userId)
 			return false;
-		if (userName == null) {
-			if (other.userName != null)
-				return false;
-		} else if (!userName.equals(other.userName))
-			return false;
-		if (userSurname == null) {
-			if (other.userSurname != null)
-				return false;
-		} else if (!userSurname.equals(other.userSurname))
-			return false;
 		return true;
 	}
 
@@ -160,14 +107,8 @@ public class OrderDto extends RepresentationModel<OrderDto>{
 		builder.append(orderId);
 		builder.append(", userId=");
 		builder.append(userId);
-		builder.append(", userName=");
-		builder.append(userName);
-		builder.append(", userSurname=");
-		builder.append(userSurname);
-		builder.append(", certificateName=");
-		builder.append(certificateName);
-		builder.append(", certificateDescription=");
-		builder.append(certificateDescription);
+		builder.append(", certificateId=");
+		builder.append(certificateId);
 		builder.append(", price=");
 		builder.append(price);
 		builder.append(", purchaseDate=");

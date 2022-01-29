@@ -4,9 +4,11 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
 
+import org.hibernate.HibernateException;
 import org.springframework.stereotype.Repository;
 
 import com.epam.esm.model.entity.Tag;
@@ -26,7 +28,7 @@ public class TagPersistenceImpl implements TagPersistence {
 		Tag tag = new Tag();
 		tag.setName(name);
 		em.persist(tag);
-		int id = tag.getId();	
+		int id = tag.getId();
 		em.getTransaction().commit();
 		em.close();
 		return id;
@@ -36,9 +38,17 @@ public class TagPersistenceImpl implements TagPersistence {
 	@Override
 	public int delete(int id) {
 		EntityManager em = factory.createEntityManager();
-		Tag tag = em.find(Tag.class, id);
-		em.remove(tag);
-		em.close();
+		Tag tag = new Tag();
+		try {
+			em.getTransaction().begin();
+			tag = em.find(Tag.class, id);
+			em.remove(tag);
+			em.getTransaction().commit();
+		} catch (HibernateException e) {
+			em.getTransaction().rollback();
+		} finally {
+			em.close();
+		}
 		return tag.getId();
 	}
 
@@ -52,9 +62,16 @@ public class TagPersistenceImpl implements TagPersistence {
 	@Override
 	public Tag findByName(String name) {
 		EntityManager em = factory.createEntityManager();
-		TypedQuery<Tag> tq = em.createQuery("select t from Tag t where t.name = :name", Tag.class);
-		Tag tag = tq.getSingleResult();
-		em.close();
+		Tag tag = new Tag();
+		try {
+			TypedQuery<Tag> tq = em.createQuery("select t from Tag t where t.name = :name", Tag.class);
+			tq.setParameter("name", name);
+			tag = tq.getSingleResult();
+		} catch (NoResultException e) {
+			return null;
+		} finally {
+			em.close();
+		}
 		return tag;
 	}
 
@@ -69,9 +86,11 @@ public class TagPersistenceImpl implements TagPersistence {
 
 	@Transactional
 	@Override
-	public List<Tag> findAll() {
+	public List<Tag> findAll(int page, int limit) {
 		EntityManager em = factory.createEntityManager();
 		TypedQuery<Tag> list = em.createQuery("from Tag", Tag.class);
+		list.setFirstResult((page - 1) * limit);
+		list.setMaxResults(limit);
 		List<Tag> tags = list.getResultList();
 		em.close();
 		return tags;

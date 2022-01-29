@@ -2,17 +2,34 @@ package com.epam.esm.model.entity;
 
 import java.time.LocalDateTime;
 
-import org.springframework.stereotype.Component;
-@Component
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.SecondaryTable;
+import javax.persistence.Table;
+@Entity
+@Table(name = "tag")
+@SecondaryTable(name = "gift_certificate")
 public class CertificateWithTag {
+	
+	@Column(name = "id", table = "tag", insertable = false, updatable = false)
 	private int tagId;
+	@Column(name = "tag_name", table = "tag", insertable = false, updatable = false)
 	private String tagName;
+	@Id
+	@Column(name = "id", table = "gift_certificate", insertable = false, updatable = false)
 	private int certificateId;
+	@Column(name = "name", table = "gift_certificate", insertable = false, updatable = false)
 	private String certificateName;
+	@Column(name = "description", table = "gift_certificate", insertable = false, updatable = false)
 	private String description;
+	@Column(name = "price", table = "gift_certificate", insertable = false, updatable = false)
 	private int price;
+	@Column(name = "duration", table = "gift_certificate", insertable = false, updatable = false)
 	private String duration;
+	@Column(name = "create_date", table = "gift_certificate", insertable = false, updatable = false)
 	private LocalDateTime createDate;
+	@Column(name = "last_update_date", table = "gift_certificate", insertable = false, updatable = false)
 	private LocalDateTime lastUpdateDate;
 	
 	public CertificateWithTag() {

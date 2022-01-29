@@ -5,7 +5,6 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import javax.ws.rs.QueryParam;
 
@@ -22,7 +21,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.epam.esm.dto.OrderDto;
 import com.epam.esm.dto.converter.DtoConverter;
-import com.epam.esm.dto.pagination.DtoPagination;
 import com.epam.esm.exception.ServiceException;
 import com.epam.esm.model.entity.Order;
 import com.epam.esm.model.service.impl.OrderServiceImpl;
@@ -34,8 +32,6 @@ public class OrderController {
 
 	@Autowired
 	private OrderServiceImpl service;
-
-	private DtoPagination<OrderDto> pagination = new DtoPagination<>();
 
 	private DtoConverter converter = DtoConverter.getInstance();
 
@@ -63,30 +59,30 @@ public class OrderController {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
 		OrderDto orderDto = converter.convertOrder(order);
-		orderDto.add(linkTo(methodOn(OrderController.class).getOrdersOfUser(userId, Optional.of(1), Optional.of(5)))
-				.withRel("get user orders"));
+		orderDto.add(linkTo(methodOn(UserController.class).findUserById(userId)).withRel("get user"));
+		orderDto.add(linkTo(methodOn(CertificateController.class).getCertificateById(orderDto.getCertificateId()))
+				.withRel("get certificate"));
 		return new ResponseEntity<>(orderDto, HttpStatus.OK);
 	}
 
 	@GetMapping("/user/{userId}")
 	@ResponseBody
 	public ResponseEntity<List<OrderDto>> getOrdersOfUser(@PathVariable("userId") int userId,
-			@QueryParam("page") Optional<Integer> page, @QueryParam("limit") Optional<Integer> limit)
+			@QueryParam("page") int page, @QueryParam("limit") int limit)
 			throws ServiceException {
 		List<Order> orderList = new ArrayList<>();
 		try {
-			orderList = service.findAllUserOrders(userId);
+			orderList = service.findAllUserOrders(userId, page, limit);
 		} catch (ServiceException e) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
 		List<OrderDto> orderDto = converter.convertOrderList(orderList);
-		if (page.isPresent() && limit.isPresent()) {
-			orderDto = pagination.getPage(orderDto, page.get(), limit.get());
-		}
 		for (OrderDto order : orderDto) {
-			order.add(linkTo(methodOn(OrderController.class).findOrderById(userId, order.getOrderId()))
-					.withRel("get order"));
+			order.add(linkTo(methodOn(UserController.class).findUserById(userId))
+					.withRel("get user"));
+			order.add(linkTo(methodOn(CertificateController.class).getCertificateById(order.getCertificateId()))
+					.withRel("get certificate"));
 		}
-		return new ResponseEntity<>(orderDto,HttpStatus.OK);
+		return new ResponseEntity<>(orderDto, HttpStatus.OK);
 	}
 }

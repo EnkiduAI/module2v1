@@ -133,11 +133,8 @@ public class DtoConverter {
 	public OrderDto convertOrder(Order order) {
 		OrderDto dto = new OrderDto();
 		dto.setOrderId(order.getOrderId());
-		dto.setUserId(order.getUserId());
-		dto.setUserName(order.getUserName());
-		dto.setUserSurname(order.getUserSurname());
-		dto.setCertificateName(order.getCertificateName());
-		dto.setCertificateDescription(order.getCertificateDescription());
+		dto.setUserId(order.getIdUser());
+		dto.setCertificateId(order.getIdCertificate());
 		dto.setPrice(order.getPrice());
 		dto.setPurchaseDate(order.getPurchaseDate());
 		return dto;

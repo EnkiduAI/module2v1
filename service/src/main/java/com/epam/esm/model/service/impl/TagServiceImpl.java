@@ -54,8 +54,8 @@ public class TagServiceImpl implements TagService {
 	 * @throws ServiceException the service exception
 	 */
 	@Override
-	public List<Tag> findAllTags() throws ServiceException {
-		return tagDao.findAll();
+	public List<Tag> findAllTags(int page, int limit) throws ServiceException {
+		return tagDao.findAll(page, limit);
 	}
 
 	/**

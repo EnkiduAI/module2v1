@@ -16,30 +16,30 @@ public interface CertificateService {
 	
 	GiftCertificate findCertificateById(int id) throws ServiceException;// check
 	
-	List<GiftCertificate> findAllCertificates() throws ServiceException;// check
+	List<GiftCertificate> findAllCertificates(int page, int limit) throws ServiceException;// check
 	
 	GiftCertificate update(GiftCertificate certificate, int id) throws ServiceException;// check
 
 	CertificateWithTag update(String tagName, GiftCertificate certificate, int certificateId) throws ServiceException;
 	
-	List<CertificateWithTag> getCertificatesWithTags()
+	List<CertificateWithTag> getCertificatesWithTags(int page, int limit)
 			throws ServiceException;// check
 
-	List<CertificateWithTag> getCertificatesWithTagsByTagname(String tagName) throws ServiceException;
+	List<CertificateWithTag> getCertificatesWithTagsByTagname(String tagName, int page, int limit) throws ServiceException;
 
-	List<CertificateWithTag> getCertificatesWithTagsByTagnameSorted(String tagName, String sortType)
+	List<CertificateWithTag> getCertificatesWithTagsByTagnameSorted(String tagName, String sortType, int page, int limit)
 			throws ServiceException;
 
-	List<CertificateWithTag> getCertificatesWithTagsByCertificate(String certificateName) throws ServiceException;
+	List<CertificateWithTag> getCertificatesWithTagsByCertificate(String certificateName, int page, int limit) throws ServiceException;
 
-	List<CertificateWithTag> getCertificatesWithTagsByCertificateSorted(String certificateName, String sortType)
+	List<CertificateWithTag> getCertificatesWithTagsByCertificateSorted(String certificateName, String sortType, int page, int limit)
 			throws ServiceException;
 
-	List<CertificateWithTag> getCertificatesWithTagsByCertificateAndTagname(String tagName, String certificateName)
+	List<CertificateWithTag> getCertificatesWithTagsByCertificateAndTagname(String tagName, String certificateName, int page, int limit)
 			throws ServiceException;
 
 	List<CertificateWithTag> getCertificatesWithTagsByCertificateAndTagnameSorted(String tagName,
-			String certificateName, String sortType) throws ServiceException;
+			String certificateName, String sortType, int page, int limit) throws ServiceException;
 
 	GiftCertificate deleteCertificate(int certId) throws ServiceException;// check
 }

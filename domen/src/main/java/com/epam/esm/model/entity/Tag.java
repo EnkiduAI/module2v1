@@ -1,11 +1,15 @@
 package com.epam.esm.model.entity;
 
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 @Entity
 @Table(name = "tag")
@@ -14,17 +18,38 @@ public class Tag implements Serializable{
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "id_tag")
 	private int id;
 	@Column(name = "tag_name")
 	private String name;
-	
+	@ManyToMany(mappedBy = "tags")
+	private Set<GiftCertificate> giftCertificates = new HashSet<>();
+
 	public Tag() {
 		
 	}
-
+	
 	public Tag(int id, String name) {
 		this.id = id;
 		this.name = name;
+	}
+	
+	public void addCertificate(GiftCertificate certificate) {
+		this.giftCertificates.add(certificate);
+		certificate.getTags().add(this);
+	}
+	
+	public void removeCertificate(GiftCertificate certificate) {
+		this.giftCertificates.remove(certificate);
+		certificate.getTags().remove(this);
+	}
+	
+	public Set<GiftCertificate> getGiftCertificates() {
+		return giftCertificates;
+	}
+
+	public void setGiftCertificates(Set<GiftCertificate> giftCertificates) {
+		this.giftCertificates = giftCertificates;
 	}
 
 	public int getId() {

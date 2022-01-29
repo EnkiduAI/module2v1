@@ -1,11 +1,10 @@
-package com.epam.esm.model.dao;
-
+package com.epam.esm.persistence;
 import java.util.List;
 
 import com.epam.esm.model.entity.CertificateWithTag;
 import com.epam.esm.model.entity.GiftCertificate;
 
-public interface CertificateDao {
+public interface GiftCertificatePersistance {
 	int create(String name, String description, int price, String duration);
 	int update(GiftCertificate certificate, int id);
 	int delete(int id);

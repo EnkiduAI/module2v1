@@ -9,6 +9,6 @@ import com.epam.esm.model.entity.User;
 public interface UserService {
 
 	User findById(int id)throws ServiceException;
-	List<User>findAll()throws ServiceException;
+	List<User>findAll(int page, int limit)throws ServiceException;
 	Tag findMostPopularTag() throws ServiceException;
 }

@@ -8,23 +8,24 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.epam.esm.exception.ServiceException;
-import com.epam.esm.model.dao.impl.JdbcTemplateCertificateDaoImpl;
-import com.epam.esm.model.dao.impl.JdbcTemplateTagDaoImpl;
 import com.epam.esm.model.entity.CertificateWithTag;
 import com.epam.esm.model.entity.GiftCertificate;
 import com.epam.esm.model.entity.Tag;
 import com.epam.esm.model.service.CertificateService;
+import com.epam.esm.persistence.impl.GiftCetificatePersistanceImpl;
+import com.epam.esm.persistence.impl.TagPersistenceImpl;
+
 
 @Service
 public class CertificateServiceImpl implements CertificateService {
 
 	/** Certificate dao. */
-	private JdbcTemplateCertificateDaoImpl certificateDao;
+	private GiftCetificatePersistanceImpl certificateDao;
 
-	private JdbcTemplateTagDaoImpl tagDao;
+	private TagPersistenceImpl tagDao;
 
 	@Autowired
-	public CertificateServiceImpl(JdbcTemplateCertificateDaoImpl certificateDao, JdbcTemplateTagDaoImpl tagDao) {
+	public CertificateServiceImpl(GiftCetificatePersistanceImpl certificateDao, TagPersistenceImpl tagDao) {
 		this.certificateDao = certificateDao;
 		this.tagDao = tagDao;
 	}
@@ -96,8 +97,8 @@ public class CertificateServiceImpl implements CertificateService {
 	 * @throws ServiceException the service exception
 	 */
 	@Override
-	public List<GiftCertificate> findAllCertificates() throws ServiceException {
-		return certificateDao.findAll();
+	public List<GiftCertificate> findAllCertificates(int page, int limit) throws ServiceException {
+		return certificateDao.findAll(page, limit);
 	}
 
 	/**
@@ -111,9 +112,8 @@ public class CertificateServiceImpl implements CertificateService {
 	@Transactional
 	@Override
 	public GiftCertificate update(GiftCertificate certificate, int id) throws ServiceException {
-		int certificateId = certificate.getId();
 		certificateDao.update(certificate, id);
-		return certificateDao.findById(certificateId);
+		return certificateDao.findById(id);
 	}
 
 	/**
@@ -155,48 +155,48 @@ public class CertificateServiceImpl implements CertificateService {
 	 * @throws ServiceException the service exception
 	 */
 	@Override
-	public List<CertificateWithTag> getCertificatesWithTags() throws ServiceException {
-		return certificateDao.findAllCertificatesWithTags();
+	public List<CertificateWithTag> getCertificatesWithTags(int page, int limit) throws ServiceException {
+		return certificateDao.findAllCertificatesWithTags(page, limit);
 	}
 
 	// list =
 	// list.stream().sorted(Comparator.comparing(CertificateWithTag::getCertificateName).reversed())
 	@Override
-	public List<CertificateWithTag> getCertificatesWithTagsByTagname(String tagName) throws ServiceException {
-		return certificateDao.findCertificateWithTagByTagname(tagName);
+	public List<CertificateWithTag> getCertificatesWithTagsByTagname(String tagName, int page, int limit) throws ServiceException {
+		return certificateDao.findCertificateWithTagByTagname(tagName, page, limit);
 	}
 
 	@Override
-	public List<CertificateWithTag> getCertificatesWithTagsByTagnameSorted(String tagName, String sortType)
+	public List<CertificateWithTag> getCertificatesWithTagsByTagnameSorted(String tagName, String sortType, int page, int limit)
 			throws ServiceException {
-		List<CertificateWithTag> list = certificateDao.findCertificateWithTagByTagname(tagName);
+		List<CertificateWithTag> list = certificateDao.findCertificateWithTagByTagname(tagName, page, limit);
 		return sort(list, sortType);
 	}
 
 	@Override
-	public List<CertificateWithTag> getCertificatesWithTagsByCertificate(String certificateName)
+	public List<CertificateWithTag> getCertificatesWithTagsByCertificate(String certificateName, int page, int limit)
 			throws ServiceException {
-		return certificateDao.findCertificateWithTagByCertificate(certificateName);
+		return certificateDao.findCertificateWithTagByCertificate(certificateName, page, limit);
 	}
 
 	@Override
-	public List<CertificateWithTag> getCertificatesWithTagsByCertificateSorted(String certificateName, String sortType)
+	public List<CertificateWithTag> getCertificatesWithTagsByCertificateSorted(String certificateName, String sortType, int page, int limit)
 			throws ServiceException {
-		List<CertificateWithTag> list = certificateDao.findCertificateWithTagByCertificate(certificateName);
+		List<CertificateWithTag> list = certificateDao.findCertificateWithTagByCertificate(certificateName, page, limit);
 		return sort(list, sortType);
 	}
 
 	@Override
 	public List<CertificateWithTag> getCertificatesWithTagsByCertificateAndTagname(String tagName,
-			String certificateName) throws ServiceException {
-		return certificateDao.findCertificateWithTagByCertificateAndTagname(tagName, certificateName);
+			String certificateName, int page, int limit) throws ServiceException {
+		return certificateDao.findCertificateWithTagByCertificateAndTagname(tagName, certificateName, page, limit);
 	}
 
 	@Override
 	public List<CertificateWithTag> getCertificatesWithTagsByCertificateAndTagnameSorted(String tagName,
-			String certificateName, String sortType) throws ServiceException {
+			String certificateName, String sortType, int page, int limit) throws ServiceException {
 		List<CertificateWithTag> list = certificateDao.findCertificateWithTagByCertificateAndTagname(tagName,
-				certificateName);
+				certificateName, page, limit);
 		return sort(list, sortType);
 	}
 

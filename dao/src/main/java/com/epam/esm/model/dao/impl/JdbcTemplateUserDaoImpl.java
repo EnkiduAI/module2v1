@@ -18,7 +18,7 @@ public class JdbcTemplateUserDaoImpl implements UserDao {
 
 	private static final String FIND_ALL = """
 			select user_id, user_name, user_surname
-			from users
+			from users limit ?,?
 			""";
 	private static final String FIND_BY_ID = """
 			select user_id, user_name, user_surname
@@ -48,8 +48,8 @@ public class JdbcTemplateUserDaoImpl implements UserDao {
 	}
 
 	@Override
-	public List<User> findAll() {
-		return jdbcTemplate.query(FIND_ALL, new BeanPropertyRowMapper<>(User.class));
+	public List<User> findAll(int page, int limit) {
+		return jdbcTemplate.query(FIND_ALL, new BeanPropertyRowMapper<>(User.class), (page - 1)* limit, limit);
 	}
 
 	@Override

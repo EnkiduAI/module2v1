@@ -20,39 +20,41 @@ import com.epam.esm.model.entity.GiftCertificate;
 import com.epam.esm.model.entity.Order;
 import com.epam.esm.model.entity.User;
 import com.epam.esm.model.entity.mapper.OrderMapper;
+
 @Repository
-public class JdbcTemplateOrderDaoImpl implements OrderDao{
-	
+public class JdbcTemplateOrderDaoImpl implements OrderDao {
+
 	private static final String CREATE_ORDER = """
 			insert into certificates.order values(null,?,?,?,?)
 			""";
 	private static final String FIND_ALL_USER_ORDERS = """
 			select id_order, id_user, u.user_name, u.user_surname, c.name, c.description,
 			o.price, purchase_date
-			from certificates.order as o
-			join gift_certificate as c on c.id = o.id_certificate
+			from certificates.orders as o
+			join gift_certificate as c on c.cert_id = o.id_certificate
 			join users as u on u.user_id = id_user
-			where id_user = ? 
+			where id_user = ?
+			limit ?,?
 			""";
 	private static final String FIND_USER_ORDER_BY_ID = """
 			select id_order, id_user, user_name, user_surname, c.name, c.description,
 			o.price, purchase_date
-			from certificates.order as o
-			join gift_certificate as c on c.id = o.id_certificate
+			from certificates.orders as o
+			join gift_certificate as c on c.cert_id = o.id_certificate
 			join users on users.user_id = o.id_user
 			where id_user = ? and id_order = ?
 			""";
 	private static final String FIND_ORDER_BY_ID = """
 			select id_order, id_user, u.user_name, u.user_surname, c.name, c.description,
 			o.price, purchase_date
-			from certificates.order as o
-			join gift_certificate as c on c.id = o.id_certificate
+			from certificates.orders as o
+			join gift_certificate as c on c.cert_id = o.id_certificate
 			join users as u on u.user_id = o.id_user
 			where id_order = ?
 			""";
-	
+
 	private JdbcTemplate jdbcTemplate;
-	
+
 	@Autowired
 	public JdbcTemplateOrderDaoImpl(JdbcTemplate jdbcTemplate) {
 		this.jdbcTemplate = jdbcTemplate;
@@ -60,9 +62,9 @@ public class JdbcTemplateOrderDaoImpl implements OrderDao{
 
 	@Override
 	public int createOrder(User user, GiftCertificate certificate) {
-		KeyHolder key = new GeneratedKeyHolder();		
+		KeyHolder key = new GeneratedKeyHolder();
 		jdbcTemplate.update(new PreparedStatementCreator() {
-			
+
 			@Override
 			public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
 				PreparedStatement ps = con.prepareStatement(CREATE_ORDER, Statement.RETURN_GENERATED_KEYS);
@@ -77,8 +79,8 @@ public class JdbcTemplateOrderDaoImpl implements OrderDao{
 	}
 
 	@Override
-	public List<Order> findAllUserOrders(int userId) {
-		return jdbcTemplate.query(FIND_ALL_USER_ORDERS, new OrderMapper(), userId);
+	public List<Order> findAllUserOrders(int userId, int page, int limit) {
+		return jdbcTemplate.query(FIND_ALL_USER_ORDERS, new OrderMapper(), userId, (page - 1) * limit, limit);
 	}
 
 	@Override

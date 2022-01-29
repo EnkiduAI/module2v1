@@ -1,8 +1,12 @@
 package com.epam.esm.controller;
 
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
 import java.util.List;
+
 import javax.ws.rs.QueryParam;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.HttpStatus;
@@ -18,18 +22,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.epam.esm.dto.TagDto;
 import com.epam.esm.dto.converter.DtoConverter;
-import com.epam.esm.dto.pagination.DtoPagination;
 import com.epam.esm.exception.ServiceException;
 import com.epam.esm.model.entity.Tag;
 import com.epam.esm.model.service.impl.TagServiceImpl;
-import java.util.Optional;
 
 @RestController
 @ComponentScan(basePackages = { "com.epam.esm" })
 @RequestMapping("/view/api/tags")
 public class TagController {
-
-	private DtoPagination<TagDto> pagination = new DtoPagination<>();
 
 	/** Converter. */
 	private DtoConverter converter = DtoConverter.getInstance();
@@ -46,17 +46,14 @@ public class TagController {
 	 */
 	@GetMapping
 	@ResponseBody
-	public ResponseEntity<List<TagDto>> getAllTags(@QueryParam("page") Optional<Integer> page,
-			@QueryParam("limit") Optional<Integer> limit) throws ServiceException {
-		List<Tag> tags = service.findAllTags();
+	public ResponseEntity<List<TagDto>> getAllTags(@QueryParam("page") int page,
+			@QueryParam("limit") int limit) throws ServiceException {
+		List<Tag> tags = service.findAllTags(page, limit);
 		List<TagDto> tagsDto = converter.convertTags(tags);
-		if (page.isPresent() && limit.isPresent()) {
-			tagsDto = pagination.getPage(tagsDto, page.get(), limit.get());
-		}
-		for(TagDto tag : tagsDto) {
+		for (TagDto tag : tagsDto) {
 			tag.add(linkTo(methodOn(TagController.class).getTagById(tag.getTagId())).withSelfRel());
 		}
-		return new ResponseEntity<>(tagsDto,HttpStatus.OK);
+		return new ResponseEntity<>(tagsDto, HttpStatus.OK);
 	}
 
 	/**
@@ -76,7 +73,8 @@ public class TagController {
 			throw new ServiceException("Tag with id:=" + id + " not found");
 		}
 		TagDto tagDto = converter.convertTag(tag);
-		tagDto.add(linkTo(methodOn(TagController.class).getAllTags(Optional.of(1), Optional.of(5))).withRel("get all tags"));
+		tagDto.add(linkTo(methodOn(TagController.class).getAllTags(1, 5))
+				.withRel("get all tags"));
 		return new ResponseEntity<>(tagDto, HttpStatus.OK);
 	}
 

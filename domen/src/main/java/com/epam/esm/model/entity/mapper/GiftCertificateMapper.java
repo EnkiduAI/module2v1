@@ -12,7 +12,7 @@ public class GiftCertificateMapper implements RowMapper<GiftCertificate> {
 	@Override
 	public GiftCertificate mapRow(ResultSet rs, int rowNum) throws SQLException {
 		GiftCertificate certificate = new GiftCertificate();
-		certificate.setId(rs.getInt("id"));
+		certificate.setId(rs.getInt("cert_id"));
 		certificate.setName(rs.getString("name"));
 		certificate.setDescription(rs.getString("description"));
 		certificate.setPrice(rs.getInt("price"));

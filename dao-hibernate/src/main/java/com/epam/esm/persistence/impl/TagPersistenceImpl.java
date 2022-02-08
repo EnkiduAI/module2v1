@@ -11,6 +11,7 @@ import javax.transaction.Transactional;
 import org.hibernate.HibernateException;
 import org.springframework.stereotype.Repository;
 
+import com.epam.esm.model.entity.GiftCertificate;
 import com.epam.esm.model.entity.Tag;
 import com.epam.esm.persistence.EntityManagerHelper;
 import com.epam.esm.persistence.TagPersistence;
@@ -54,8 +55,23 @@ public class TagPersistenceImpl implements TagPersistence {
 
 	@Override
 	public int unbindTag(int id) {
-		// TODO Auto-generated method stub
-		return 0;
+		EntityManager em = factory.createEntityManager();
+		int result = 0;
+		em.getTransaction().begin();
+		try {
+			Tag tag = em.find(Tag.class, id);
+			for (GiftCertificate certificate : tag.getGiftCertificates()) {
+				tag.removeCertificate(certificate);
+			}
+			em.getTransaction().commit();
+			result = 1;
+		}catch (HibernateException e) {
+			em.getTransaction().rollback();
+			throw new HibernateException("Cannot unbind tag");
+		}finally {
+			em.close();
+		}
+		return result;
 	}
 
 	@Transactional

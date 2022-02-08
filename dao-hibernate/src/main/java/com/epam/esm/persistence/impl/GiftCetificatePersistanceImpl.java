@@ -6,7 +6,6 @@ import static com.epam.esm.persistence.query.GiftCertificateQuery.FIND_CERTIFICA
 import static com.epam.esm.persistence.query.GiftCertificateQuery.FIND_CERTIFICATE_WITH_TAG_BY_TAGNAME;
 import static com.epam.esm.persistence.query.GiftCertificateQuery.FIND_CERTIFICATE_WITH_TAG_BY_TAGNAME_PARTNAME;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -24,6 +23,10 @@ import com.epam.esm.persistence.GiftCertificatePersistance;
 
 @Repository
 public class GiftCetificatePersistanceImpl implements GiftCertificatePersistance {
+	
+	public GiftCetificatePersistanceImpl() {
+		
+	}
 
 	EntityManagerFactory factory = EntityManagerHelper.getFactory();
 
@@ -32,20 +35,10 @@ public class GiftCetificatePersistanceImpl implements GiftCertificatePersistance
 		EntityManager em = factory.createEntityManager();
 		em.getTransaction().begin();
 		GiftCertificate certificate = new GiftCertificate();
-		if (name != null) {
-			certificate.setName(name);
-		}
-		if (description != null) {
-			certificate.setDescription(description);
-		}
-		if (price != 0) {
-			certificate.setPrice(price);
-		}
-		if (duration != null) {
-			certificate.setDuration(duration);
-		}
-		certificate.setCreateDate(LocalDateTime.now());
-		certificate.setLastUpdateDate(LocalDateTime.now());
+		certificate.setName(name);
+		certificate.setDescription(description);
+		certificate.setPrice(price);
+		certificate.setDuration(duration);
 		em.persist(certificate);
 		int id = certificate.getId();
 		em.getTransaction().commit();
@@ -59,8 +52,8 @@ public class GiftCetificatePersistanceImpl implements GiftCertificatePersistance
 		int result = 0;
 		em.getTransaction().begin();
 		try {
-			em.find(GiftCertificate.class, id);
-			em.merge(certificate);
+			GiftCertificate oldCertificate = em.find(GiftCertificate.class, id);
+			oldCertificate = em.merge(certificate);
 			em.getTransaction().commit();
 			result = 1;
 		} catch (HibernateException e) {
@@ -81,9 +74,9 @@ public class GiftCetificatePersistanceImpl implements GiftCertificatePersistance
 			GiftCertificate certificate = em.find(GiftCertificate.class, id);
 			em.remove(certificate);
 			em.getTransaction().commit();
+			result = 1;
 		} catch (HibernateException e) {
 			em.getTransaction().rollback();
-			result = 1;
 			throw new HibernateException("Gift certificate deletion failed");
 		} finally {
 			em.close();
@@ -94,9 +87,10 @@ public class GiftCetificatePersistanceImpl implements GiftCertificatePersistance
 	@Override
 	public int bindTag(int certificateId, int tagId) {
 		EntityManager em = factory.createEntityManager();
+		EntityManager em1 = factory.createEntityManager();
 		int result = 0;
-		try {
-			em.getTransaction().begin();
+		em.getTransaction().begin();
+		try {			
 			Tag tag = em.find(Tag.class, tagId);
 			GiftCertificate certificate = em.find(GiftCertificate.class, certificateId);
 			certificate.addTag(tag);
@@ -105,7 +99,7 @@ public class GiftCetificatePersistanceImpl implements GiftCertificatePersistance
 			result = 1;
 		} catch (HibernateException e) {
 			em.getTransaction().rollback();
-			throw new HibernateException("Cannot bind tags");
+			throw new HibernateException("Cannot bind tag");
 		}
 		em.close();
 		return result;
@@ -126,6 +120,8 @@ public class GiftCetificatePersistanceImpl implements GiftCertificatePersistance
 		} catch (HibernateException e) {
 			em.getTransaction().rollback();
 			throw new HibernateException("Cannot unbind certificate");
+		}finally {
+			em.close();
 		}
 		return result;
 	}
@@ -189,7 +185,7 @@ public class GiftCetificatePersistanceImpl implements GiftCertificatePersistance
 		EntityManager em = factory.createEntityManager();
 		TypedQuery<CertificateWithTag> query = em.createQuery(FIND_CERTIFICATE_WITH_TAG_BY_PARTNAME,
 				CertificateWithTag.class);
-		query.setParameter("name", partName);
+		query.setParameter("name", "%"+partName+"%");
 		query.setFirstResult((page - 1) * limit);
 		query.setMaxResults(limit);
 		List<CertificateWithTag> cwt = query.getResultList();
@@ -203,7 +199,7 @@ public class GiftCetificatePersistanceImpl implements GiftCertificatePersistance
 		EntityManager em = factory.createEntityManager();
 		TypedQuery<CertificateWithTag> query = em.createQuery(FIND_CERTIFICATE_WITH_TAG_BY_TAGNAME_PARTNAME,
 				CertificateWithTag.class);
-		query.setParameter("name", "%"+certificateName+"%");
+		query.setParameter("name", "%" + certificateName + "%");
 		query.setParameter("tag_name", tagName);
 		query.setFirstResult((page - 1) * limit);
 		query.setMaxResults(limit);

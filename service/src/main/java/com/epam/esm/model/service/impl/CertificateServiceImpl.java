@@ -23,6 +23,10 @@ public class CertificateServiceImpl implements CertificateService {
 	private GiftCetificatePersistanceImpl certificateDao;
 
 	private TagPersistenceImpl tagDao;
+	
+	public CertificateServiceImpl() {
+		
+	}
 
 	@Autowired
 	public CertificateServiceImpl(GiftCetificatePersistanceImpl certificateDao, TagPersistenceImpl tagDao) {
@@ -215,7 +219,7 @@ public class CertificateServiceImpl implements CertificateService {
 		if (certificateDao.delete(certId) > 0) {
 			return deleted;
 		} else {
-			throw new ServiceException("Method deleteCertificate at ProjectServiceImpl was interrupted with error");
+			throw new ServiceException("Method deleteCertificate at CertificateServiceImpl was interrupted with error");
 		}
 	}
 

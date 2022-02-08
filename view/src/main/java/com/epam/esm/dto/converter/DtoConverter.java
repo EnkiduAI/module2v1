@@ -71,7 +71,7 @@ public class DtoConverter {
 		dto.setPrice(entity.getPrice());
 		dto.setDuration(entity.getDuration());
 		dto.setCreateDate(entity.getCreateDate());
-		dto.setLastUpdateDate(entity.getLastUpdateDate());
+		dto.setLastUpdateDate(entity.getUpdateDate());
 		return dto;
 	}
 

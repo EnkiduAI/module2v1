@@ -46,9 +46,9 @@ public class UserPersistenceImpl implements UserPersistence {
 	public Tag findMostPopularTag() {
 		EntityManager em = factory.createEntityManager();
 		Tag tag = new Tag();
-		try {
+		try {			
 			Query query = em.createNativeQuery(FIND_MOST_POPULAR_TAG, Tag.class);
-			tag = (Tag) query.getSingleResult();
+			tag = (Tag)query.getSingleResult();
 		} finally {
 			em.close();
 		}

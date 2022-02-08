@@ -1,53 +1,13 @@
 package com.epam.esm.model.entity;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
-import javax.persistence.PrePersist;
-import javax.persistence.PreRemove;
-import javax.persistence.PreUpdate;
+public interface Auditable {
+	LocalDateTime getCreateDate();
 
-public class Auditable {
-	private String operation;
-	private long timestamp;
+	void setCreateDate(LocalDateTime createDate);
 
-	public Auditable(String operation, long timestamp) {
-		this.operation = operation;
-		this.timestamp = timestamp;
-	}
+	LocalDateTime getUpdateDate();
 
-	public String getOperation() {
-		return operation;
-	}
-
-	public void setOperation(String operation) {
-		this.operation = operation;
-	}
-
-	public long getTimestamp() {
-		return timestamp;
-	}
-
-	public void setTimestamp(long timestamp) {
-		this.timestamp = timestamp;
-	}
-
-	@PrePersist
-	public void onPrePersist() {
-		audit("INSERT");
-	}
-
-	@PreUpdate
-	public void onPreUpdate() {
-		audit("UPDATE");
-	}
-
-	@PreRemove
-	public void onPreRemove() {
-		audit("REMOVE");
-	}
-
-	private void audit(String operation) {
-		setOperation(operation);
-		setTimestamp(new Date().getTime());
-	}
+	void setUpdateDate(LocalDateTime updateDate);
 }

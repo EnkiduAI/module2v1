@@ -11,13 +11,12 @@ import javax.persistence.Table;
 @Table(name = "tag")
 @SecondaryTable(name = "gift_certificate")
 public class CertificateWithTag {
-	
-	@Column(name = "id", table = "tag", insertable = false, updatable = false)
+	@Id
+	@Column(name = "id_tag", table = "tag", insertable = false, updatable = false)
 	private int tagId;
 	@Column(name = "tag_name", table = "tag", insertable = false, updatable = false)
 	private String tagName;
-	@Id
-	@Column(name = "id", table = "gift_certificate", insertable = false, updatable = false)
+	@Column(name = "cert_id", table = "gift_certificate", insertable = false, updatable = false)
 	private int certificateId;
 	@Column(name = "name", table = "gift_certificate", insertable = false, updatable = false)
 	private String certificateName;

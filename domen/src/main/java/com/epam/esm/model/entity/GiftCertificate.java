@@ -16,10 +16,10 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
-@EntityListeners(Auditable.class)
+@EntityListeners(AuditListner.class)
 @Entity
 @Table(name = "gift_certificate")
-public class GiftCertificate implements Serializable {
+public class GiftCertificate implements Serializable, Auditable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
@@ -113,21 +113,25 @@ public class GiftCertificate implements Serializable {
 	public void setDuration(String duration) {
 		this.duration = duration;
 	}
+	
+	@Override
+	public LocalDateTime getUpdateDate() {
+		return lastUpdateDate;
+	}
 
+	@Override
+	public void setUpdateDate(LocalDateTime updateDate) {
+		this.lastUpdateDate = updateDate;		
+	}
+
+	@Override
 	public LocalDateTime getCreateDate() {
 		return createDate;
 	}
 
+	@Override
 	public void setCreateDate(LocalDateTime createDate) {
 		this.createDate = createDate;
-	}
-
-	public LocalDateTime getLastUpdateDate() {
-		return lastUpdateDate;
-	}
-
-	public void setLastUpdateDate(LocalDateTime lastUpdateDate) {
-		this.lastUpdateDate = lastUpdateDate;
 	}
 
 	@Override

@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.epam.esm.dto.GiftCertificateDto;
 import com.epam.esm.dto.converter.DtoConverter;
+import com.epam.esm.exception.NotFoundException;
 import com.epam.esm.exception.ServiceException;
 import com.epam.esm.model.entity.GiftCertificate;
 import com.epam.esm.model.service.impl.CertificateServiceImpl;
@@ -47,18 +48,13 @@ public class CertificateController {
 	 * @return all certificates
 	 * @throws ServiceException the service exception
 	 */
+
 	@GetMapping
 	@ResponseBody
 	public ResponseEntity<List<GiftCertificateDto>> getAllCertificates(@QueryParam("page") int page,
-			@QueryParam("limit") int limit) throws ServiceException {
-		List<GiftCertificate> giftCertificates;
-		List<GiftCertificateDto> certificatesDto;
-		try {
-			giftCertificates = service.findAllCertificates(page, limit);
-		} catch (ServiceException e) {
-			throw new ServiceException("Can't find certificates");
-		}
-		certificatesDto = converter.convertCertificates(giftCertificates);
+			@QueryParam("limit") int limit) throws ServiceException, NotFoundException {
+		List<GiftCertificate> giftCertificates = service.findAllCertificates(page, limit);
+		List<GiftCertificateDto> certificatesDto = converter.convertCertificates(giftCertificates);
 		for (GiftCertificateDto certificate : certificatesDto) {
 			certificate.add(linkTo(methodOn(CertificateController.class).getCertificateById(certificate.getId()))
 					.withSelfRel());
@@ -78,7 +74,8 @@ public class CertificateController {
 	 */
 	@GetMapping("/{id}")
 	@ResponseBody
-	public ResponseEntity<GiftCertificateDto> getCertificateById(@PathVariable("id") int id) throws ServiceException {
+	public ResponseEntity<GiftCertificateDto> getCertificateById(@PathVariable("id") int id)
+			throws ServiceException, NotFoundException {
 		GiftCertificate certificate = service.findCertificateById(id);
 		GiftCertificateDto certificateDto = converter.convertGiftCertificate(certificate);
 		certificateDto.add(
@@ -94,17 +91,11 @@ public class CertificateController {
 	 */
 	@PostMapping
 	@ResponseBody
-	public ResponseEntity<GiftCertificateDto> createCertificate(@RequestBody Map<String, Object> fields)
-			throws ServiceException {
-		GiftCertificate certificate = new GiftCertificate();
-		try {
-			certificate = service.createCertificate(fields.get("name").toString(), fields.get("description").toString(),
-					(int) fields.get("price"), fields.get("duration").toString());
-		} catch (ServiceException e) {
-			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-		}
+	public ResponseEntity<GiftCertificateDto> createCertificate(@RequestBody Map<String, Object> createdCertificate)
+			throws ServiceException, NotFoundException {
+		GiftCertificate certificate = service.createCertificate(createdCertificate);
 		GiftCertificateDto certificateDto = converter.convertGiftCertificate(certificate);
-		certificateDto.add(linkTo(methodOn(CertificateController.class).getCertificateById(certificateDto.getId()))
+		certificateDto.add(linkTo(methodOn(CertificateController.class).getCertificateById(certificate.getId()))
 				.withRel("get certificate"));
 		certificateDto.add(linkTo(methodOn(CertificateController.class).getAllCertificates(1, 5)).withRel("get all"));
 		return new ResponseEntity<>(certificateDto, HttpStatus.OK);
@@ -120,27 +111,8 @@ public class CertificateController {
 	@PatchMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	public ResponseEntity<GiftCertificateDto> updateGiftCertificate(@PathVariable("id") int id,
-			@RequestBody GiftCertificate request) {
-		GiftCertificate certificateToUpdate = new GiftCertificate();
-		GiftCertificate updated = new GiftCertificate();
-		try {
-			certificateToUpdate = service.findCertificateById(id);
-			if (request.getName() != null) {
-				certificateToUpdate.setName(request.getName());
-			}
-			if (request.getDescription() != null) {
-				certificateToUpdate.setDescription(request.getDescription());
-			}
-			if (request.getPrice() > 0) {
-				certificateToUpdate.setPrice(request.getPrice());
-			}
-			if (request.getDuration() != null) {
-				certificateToUpdate.setDuration(request.getDuration());
-			}
-			updated = service.update(certificateToUpdate, id);
-		} catch (ServiceException e) {
-			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-		}
+			@RequestBody Map<String, Object> request) throws ServiceException, NotFoundException {
+		GiftCertificate updated = service.update(request, id);
 		return new ResponseEntity<>(converter.convertGiftCertificate(updated), HttpStatus.OK);
 	}
 
@@ -154,12 +126,7 @@ public class CertificateController {
 	@DeleteMapping("/{id}")
 	@ResponseBody
 	public ResponseEntity<GiftCertificateDto> deleteCertificate(@PathVariable("id") int id) throws ServiceException {
-		GiftCertificate certificate = new GiftCertificate();
-		try {
-			certificate = service.deleteCertificate(id);
-		} catch (ServiceException e) {
-			throw new ServiceException(e);
-		}
+		GiftCertificate certificate = service.deleteCertificate(id);
 		return new ResponseEntity<>(converter.convertGiftCertificate(certificate), HttpStatus.NO_CONTENT);
 	}
 }

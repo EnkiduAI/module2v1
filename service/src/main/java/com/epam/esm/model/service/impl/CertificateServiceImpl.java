@@ -2,19 +2,22 @@ package com.epam.esm.model.service.impl;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.epam.esm.exception.NotFoundException;
 import com.epam.esm.exception.ServiceException;
 import com.epam.esm.model.entity.CertificateWithTag;
 import com.epam.esm.model.entity.GiftCertificate;
 import com.epam.esm.model.entity.Tag;
 import com.epam.esm.model.service.CertificateService;
+import com.epam.esm.parser.GiftCertificateParser;
 import com.epam.esm.persistence.impl.GiftCetificatePersistanceImpl;
 import com.epam.esm.persistence.impl.TagPersistenceImpl;
-
+import com.epam.esm.validator.Validator;
 
 @Service
 public class CertificateServiceImpl implements CertificateService {
@@ -23,9 +26,11 @@ public class CertificateServiceImpl implements CertificateService {
 	private GiftCetificatePersistanceImpl certificateDao;
 
 	private TagPersistenceImpl tagDao;
-	
+
+	private Validator validator = new Validator();
+
 	public CertificateServiceImpl() {
-		
+
 	}
 
 	@Autowired
@@ -46,8 +51,12 @@ public class CertificateServiceImpl implements CertificateService {
 	 */
 	@Transactional
 	@Override
-	public GiftCertificate createCertificate(String name, String description, int price, String duration)
-			throws ServiceException {
+	public GiftCertificate createCertificate(Map<String, Object> certificate) throws ServiceException {
+		GiftCertificateParser.parseToGiftCertificate(certificate);
+		String name = certificate.get("name").toString();
+		String description = certificate.get("description").toString();
+		int price = Integer.parseInt(certificate.get("price").toString());
+		String duration = certificate.get("duration").toString();
 		int id = certificateDao.create(name, description, price, duration);
 		return certificateDao.findById(id);
 	}
@@ -87,10 +96,17 @@ public class CertificateServiceImpl implements CertificateService {
 	 *
 	 * @param id the id
 	 * @return the gift certificate
-	 * @throws ServiceException the service exception
+	 * @throws ServiceException  the service exception
+	 * @throws NotFoundException
 	 */
 	@Override
-	public GiftCertificate findCertificateById(int id) throws ServiceException {
+	public GiftCertificate findCertificateById(int id) throws ServiceException, NotFoundException {
+		if (id <= 0) {
+			throw new ServiceException("id cannot be 0 or less");
+		}
+		if (certificateDao.findById(id) == null) {
+			throw new NotFoundException("Entry with id = " + id + " not exsist");
+		}
 		return certificateDao.findById(id);
 	}
 
@@ -99,9 +115,17 @@ public class CertificateServiceImpl implements CertificateService {
 	 *
 	 * @return the list
 	 * @throws ServiceException the service exception
+	 * @throws NotFoundException 
 	 */
 	@Override
-	public List<GiftCertificate> findAllCertificates(int page, int limit) throws ServiceException {
+	public List<GiftCertificate> findAllCertificates(int page, int limit) throws ServiceException, NotFoundException {
+		if (!validator.isPageble(page, limit)) {
+			throw new ServiceException("Page & Size are incorrect");
+		}
+		List<GiftCertificate> certificates = certificateDao.findAll(page, limit);
+		if (certificates == null) {
+			throw new NotFoundException("Cannot find certificates on given criteria");
+		}
 		return certificateDao.findAll(page, limit);
 	}
 
@@ -115,8 +139,22 @@ public class CertificateServiceImpl implements CertificateService {
 	 */
 	@Transactional
 	@Override
-	public GiftCertificate update(GiftCertificate certificate, int id) throws ServiceException {
-		certificateDao.update(certificate, id);
+	public GiftCertificate update(Map<String, Object> request, int id) throws ServiceException {
+		GiftCertificateParser.parseToGiftCertificate(request);
+		GiftCertificate certificateToUpdate = certificateDao.findById(id);
+		if (request.containsKey("name")) {
+			certificateToUpdate.setName(request.get("name").toString());
+		}
+		if (request.containsKey("description")) {
+			certificateToUpdate.setDescription(request.get("description").toString());
+		}
+		if (request.containsKey("price")) {
+			certificateToUpdate.setPrice(Integer.parseInt(request.get("price").toString()));
+		}
+		if (request.containsKey("duration")) {
+			certificateToUpdate.setDuration(request.get("duration").toString());
+		}
+		certificateDao.update(certificateToUpdate, id);
 		return certificateDao.findById(id);
 	}
 
@@ -131,11 +169,26 @@ public class CertificateServiceImpl implements CertificateService {
 	 */
 	@Transactional
 	@Override
-	public CertificateWithTag update(String tagName, GiftCertificate certificate, int certificateId)
+	public CertificateWithTag updateWithTag(Map<String, Object> fields, int certificateId)
 			throws ServiceException {
+		GiftCertificateParser.parseToGiftCertificate(fields);
 		int tagId;
-		certificateDao.update(certificate, certificateId);
-		int certId = certificate.getId();
+		GiftCertificate certificateToUpdate = certificateDao.findById(certificateId);
+		if (fields.get("name") != null) {
+			certificateToUpdate.setName(fields.get("name").toString());
+		}
+		if (fields.get("description") != null) {
+			certificateToUpdate.setDescription(fields.get("description").toString());
+		}
+		if (fields.get("price") != null) {
+			certificateToUpdate.setPrice((int) fields.get("price"));
+		}
+		if (fields.get("duration") != null) {
+			certificateToUpdate.setDuration(fields.get("duration").toString());
+		}	
+		String tagName = fields.get("tagName").toString();
+		certificateDao.update(certificateToUpdate, certificateId);
+		int certId = certificateToUpdate.getId();
 		Tag expectedTag = tagDao.findByName(tagName);
 		if (expectedTag != null) {
 			tagId = expectedTag.getId();
@@ -159,48 +212,96 @@ public class CertificateServiceImpl implements CertificateService {
 	 * @throws ServiceException the service exception
 	 */
 	@Override
-	public List<CertificateWithTag> getCertificatesWithTags(int page, int limit) throws ServiceException {
-		return certificateDao.findAllCertificatesWithTags(page, limit);
+	public List<CertificateWithTag> getCertificatesWithTags(int page, int limit) throws ServiceException, NotFoundException {
+		if (!validator.isPageble(page, limit)) {
+			throw new ServiceException("Page & Size are incorrect");
+		}
+		List<CertificateWithTag> cwt = certificateDao.findAllCertificatesWithTags(page, limit);
+		if(cwt == null) {
+			throw new NotFoundException("Cannot find certificates on given criteria");
+		}
+		return cwt;
 	}
 
 	// list =
 	// list.stream().sorted(Comparator.comparing(CertificateWithTag::getCertificateName).reversed())
 	@Override
-	public List<CertificateWithTag> getCertificatesWithTagsByTagname(String tagName, int page, int limit) throws ServiceException {
-		return certificateDao.findCertificateWithTagByTagname(tagName, page, limit);
+	public List<CertificateWithTag> getCertificatesWithTagsByTagname(String tagName, int page, int limit)
+			throws ServiceException, NotFoundException {
+		if (!validator.isPageble(page, limit)) {
+			throw new ServiceException("Page & Size are incorrect");
+		}
+		List<CertificateWithTag> cwt = certificateDao.findCertificateWithTagByTagname(tagName, page, limit);
+		if(cwt == null) {
+			throw new NotFoundException("Cannot find certificates on given criteria");
+		}
+		return cwt;
 	}
 
 	@Override
-	public List<CertificateWithTag> getCertificatesWithTagsByTagnameSorted(String tagName, String sortType, int page, int limit)
-			throws ServiceException {
+	public List<CertificateWithTag> getCertificatesWithTagsByTagnameSorted(String tagName, String sortType, int page,
+			int limit) throws ServiceException, NotFoundException {
+		if (!validator.isPageble(page, limit)) {
+			throw new ServiceException("Page & Size are incorrect");
+		}
 		List<CertificateWithTag> list = certificateDao.findCertificateWithTagByTagname(tagName, page, limit);
+		if(list == null) {
+			throw new NotFoundException("Cannot find certificates on given criteria");
+		}
 		return sort(list, sortType);
 	}
 
 	@Override
 	public List<CertificateWithTag> getCertificatesWithTagsByCertificate(String certificateName, int page, int limit)
-			throws ServiceException {
-		return certificateDao.findCertificateWithTagByCertificate(certificateName, page, limit);
+			throws ServiceException, NotFoundException {
+		if (!validator.isPageble(page, limit)) {
+			throw new ServiceException("Page & Size are incorrect");
+		}
+		List<CertificateWithTag> cwt = certificateDao.findCertificateWithTagByCertificate(certificateName, page, limit);
+		if(cwt == null) {
+			throw new NotFoundException("Cannot find certificates on given criteria");
+		}
+		return cwt;
 	}
 
 	@Override
-	public List<CertificateWithTag> getCertificatesWithTagsByCertificateSorted(String certificateName, String sortType, int page, int limit)
-			throws ServiceException {
-		List<CertificateWithTag> list = certificateDao.findCertificateWithTagByCertificate(certificateName, page, limit);
+	public List<CertificateWithTag> getCertificatesWithTagsByCertificateSorted(String certificateName, String sortType,
+			int page, int limit) throws ServiceException, NotFoundException {
+		if (!validator.isPageble(page, limit)) {
+			throw new ServiceException("Page & Size are incorrect");
+		}
+		List<CertificateWithTag> list = certificateDao.findCertificateWithTagByCertificate(certificateName, page,
+				limit);
+		if(list == null) {
+			throw new NotFoundException("Cannot find certificates on given criteria");
+		}
 		return sort(list, sortType);
 	}
 
 	@Override
 	public List<CertificateWithTag> getCertificatesWithTagsByCertificateAndTagname(String tagName,
-			String certificateName, int page, int limit) throws ServiceException {
-		return certificateDao.findCertificateWithTagByCertificateAndTagname(tagName, certificateName, page, limit);
+			String certificateName, int page, int limit) throws ServiceException, NotFoundException {
+		if (!validator.isPageble(page, limit)) {
+			throw new ServiceException("Page & Size are incorrect");
+		}
+		List<CertificateWithTag> cwt = certificateDao.findCertificateWithTagByCertificateAndTagname(tagName, certificateName, page, limit);
+		if(cwt == null) {
+			throw new NotFoundException("Cannot find certificates on given criteria");
+		}
+		return cwt;
 	}
 
 	@Override
 	public List<CertificateWithTag> getCertificatesWithTagsByCertificateAndTagnameSorted(String tagName,
-			String certificateName, String sortType, int page, int limit) throws ServiceException {
+			String certificateName, String sortType, int page, int limit) throws ServiceException, NotFoundException {
+		if (!validator.isPageble(page, limit)) {
+			throw new ServiceException("Page & Size are incorrect");
+		}
 		List<CertificateWithTag> list = certificateDao.findCertificateWithTagByCertificateAndTagname(tagName,
 				certificateName, page, limit);
+		if(list == null) {
+			throw new NotFoundException("Cannot find certificates on given criteria");
+		}
 		return sort(list, sortType);
 	}
 

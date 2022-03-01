@@ -13,6 +13,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import com.epam.esm.exception.NotFoundException;
 import com.epam.esm.exception.ServiceException;
 import com.epam.esm.model.entity.Tag;
 import com.epam.esm.model.entity.User;
@@ -41,7 +42,7 @@ public class UserTest {
 	}
 
 	@Test
-	protected void findById() throws ServiceException {
+	protected void findById() throws ServiceException, NotFoundException {
 		when(persistence.findById(2)).thenReturn(user);
 		User expected = service.findById(2);
 		assertEquals(expected, user);

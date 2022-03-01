@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.epam.esm.dto.TagDto;
 import com.epam.esm.dto.converter.DtoConverter;
+import com.epam.esm.exception.NotFoundException;
 import com.epam.esm.exception.ServiceException;
 import com.epam.esm.model.entity.Tag;
 import com.epam.esm.model.service.impl.TagServiceImpl;
@@ -42,12 +43,13 @@ public class TagController {
 	 * Gets all tags.
 	 *
 	 * @return all tags
-	 * @throws ServiceException the service exception
+	 * @throws ServiceException  the service exception
+	 * @throws NotFoundException
 	 */
 	@GetMapping
 	@ResponseBody
-	public ResponseEntity<List<TagDto>> getAllTags(@QueryParam("page") int page,
-			@QueryParam("limit") int limit) throws ServiceException {
+	public ResponseEntity<List<TagDto>> getAllTags(@QueryParam("page") int page, @QueryParam("limit") int limit)
+			throws ServiceException, NotFoundException {
 		List<Tag> tags = service.findAllTags(page, limit);
 		List<TagDto> tagsDto = converter.convertTags(tags);
 		for (TagDto tag : tagsDto) {
@@ -61,20 +63,15 @@ public class TagController {
 	 *
 	 * @param id the id
 	 * @return tag by id
-	 * @throws ServiceException the service exception
+	 * @throws ServiceException  the service exception
+	 * @throws NotFoundException
 	 */
 	@GetMapping("/{id}")
 	@ResponseBody
-	public ResponseEntity<TagDto> getTagById(@PathVariable("id") int id) throws ServiceException {
-		Tag tag = new Tag();
-		try {
-			tag = service.findTagById(id);
-		} catch (ServiceException e) {
-			throw new ServiceException("Tag with id:=" + id + " not found");
-		}
+	public ResponseEntity<TagDto> getTagById(@PathVariable("id") int id) throws ServiceException, NotFoundException {
+		Tag tag = service.findTagById(id);
 		TagDto tagDto = converter.convertTag(tag);
-		tagDto.add(linkTo(methodOn(TagController.class).getAllTags(1, 5))
-				.withRel("get all tags"));
+		tagDto.add(linkTo(methodOn(TagController.class).getAllTags(1, 5)).withRel("get all tags"));
 		return new ResponseEntity<>(tagDto, HttpStatus.OK);
 	}
 
@@ -86,14 +83,8 @@ public class TagController {
 	 */
 	@PostMapping
 	@ResponseBody
-	public ResponseEntity<TagDto> createTag(@RequestBody Tag tag) {
-		Tag tagToCreate = new Tag();
-		try {
-			tagToCreate = service.createTag(tag.getName());
-		} catch (ServiceException e) {
-			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-		}
-
+	public ResponseEntity<TagDto> createTag(@RequestBody Tag tag) throws ServiceException {
+		Tag tagToCreate = service.createTag(tag.getName());
 		return new ResponseEntity<>(converter.convertTag(tagToCreate), HttpStatus.OK);
 	}
 
@@ -105,13 +96,8 @@ public class TagController {
 	 */
 	@DeleteMapping("/{id}")
 	@ResponseBody
-	public ResponseEntity<TagDto> deleteTag(@PathVariable("id") int id) {
-		Tag tag = new Tag();
-		try {
-			tag = service.deleteTag(id);
-		} catch (ServiceException e) {
-			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-		}
+	public ResponseEntity<TagDto> deleteTag(@PathVariable("id") int id) throws ServiceException{
+		Tag tag = service.deleteTag(id);
 		return new ResponseEntity<>(converter.convertTag(tag), HttpStatus.NO_CONTENT);
 	}
 }

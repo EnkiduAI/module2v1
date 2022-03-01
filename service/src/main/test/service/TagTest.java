@@ -14,6 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import com.epam.esm.exception.NotFoundException;
 import com.epam.esm.exception.ServiceException;
 import com.epam.esm.model.entity.Tag;
 import com.epam.esm.model.service.impl.TagServiceImpl;
@@ -39,7 +40,7 @@ public class TagTest {
 	}
 	
 	@Test
-	protected void findById() throws ServiceException {
+	protected void findById() throws ServiceException, NotFoundException {
 		when(persistence.findById(57)).thenReturn(tag);
 		Tag expected = service.findTagById(57);
 		assertEquals(expected, tag);

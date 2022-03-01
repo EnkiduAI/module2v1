@@ -6,15 +6,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.epam.esm.exception.NotFoundException;
 import com.epam.esm.exception.ServiceException;
 import com.epam.esm.model.entity.Tag;
 import com.epam.esm.model.service.TagService;
 import com.epam.esm.persistence.impl.TagPersistenceImpl;
+import com.epam.esm.validator.Validator;
 
 @Service
 public class TagServiceImpl implements TagService {
 
 	private TagPersistenceImpl tagDao;
+	private Validator validator= new Validator();;
 
 	@Autowired
 	public TagServiceImpl(TagPersistenceImpl tagDao) {
@@ -41,9 +44,14 @@ public class TagServiceImpl implements TagService {
 	 * @param id the id
 	 * @return the tag
 	 * @throws ServiceException the service exception
+	 * @throws NotFoundException 
 	 */
 	@Override
-	public Tag findTagById(int id) throws ServiceException {
+	public Tag findTagById(int id) throws ServiceException, NotFoundException {
+		Tag tag = tagDao.findById(id);
+		if(tag == null) {
+			throw new NotFoundException("Tag with id = "+id+" does not exist");
+		}
 		return tagDao.findById(id);
 	}
 
@@ -55,6 +63,9 @@ public class TagServiceImpl implements TagService {
 	 */
 	@Override
 	public List<Tag> findAllTags(int page, int limit) throws ServiceException {
+		if(!validator.isPageble(page, limit)) {
+			throw new ServiceException("Page & Size are incorrect");
+		}
 		return tagDao.findAll(page, limit);
 	}
 

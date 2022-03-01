@@ -1,6 +1,6 @@
 package com.epam.esm.exception.entity;
 
-public class ExceptionResponseBody {
+public class ExceptionResponseBody{
 	int code;
 	String message;
 	public ExceptionResponseBody(int code, String message) {
@@ -13,7 +13,7 @@ public class ExceptionResponseBody {
 	public void setCode(int code) {
 		this.code = code;
 	}
-	public String getMessage() {
+	public String getResponseMessage() {
 		return message;
 	}
 	public void setMessage(String message) {

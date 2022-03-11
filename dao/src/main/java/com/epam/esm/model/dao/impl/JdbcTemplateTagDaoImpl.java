@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -15,7 +16,6 @@ import org.springframework.stereotype.Repository;
 import com.epam.esm.model.dao.TagDao;
 import com.epam.esm.model.entity.Tag;
 import com.epam.esm.model.entity.mapper.TagMapper;
-
 
 @Repository
 public class JdbcTemplateTagDaoImpl implements TagDao {
@@ -32,15 +32,18 @@ public class JdbcTemplateTagDaoImpl implements TagDao {
 
 	/** Search by id query */
 	private static final String FIND_BY_ID = """
-			select tag.id, tag.tag_name from certificates.tag where id=?
+			select tag.id_tag, tag.tag_name from certificates.tag where id=?
+			""";
+
+	private static final String FIND_BY_NAME = """
+			select id_tag, tag_name from tag where tag_name = ?
 			""";
 
 	/** Find all tags query */
 	private static final String FIND_ALL_TAGS = """
-			select tag.id, tag.tag_name from certificates.tag
+			select tag.id_tag, tag.tag_name from certificates.tag limit ?,?
 			""";
-	
-	
+
 	/** Unbind tag query */
 	private static final String UNBIND_TAG = """
 			delete from certificates.gift_certificate_has_tag as gt
@@ -111,8 +114,8 @@ public class JdbcTemplateTagDaoImpl implements TagDao {
 	 * @return the list
 	 */
 	@Override
-	public List<Tag> findAll() {
-		return jdbcTemplate.query(FIND_ALL_TAGS, new TagMapper());
+	public List<Tag> findAll(int page, int limit) {
+		return jdbcTemplate.query(FIND_ALL_TAGS, new TagMapper(), (page - 1) * limit, limit);
 	}
 
 	/**
@@ -124,6 +127,15 @@ public class JdbcTemplateTagDaoImpl implements TagDao {
 	@Override
 	public int unbindTag(int id) {
 		return jdbcTemplate.update(UNBIND_TAG, id);
+	}
+
+	@Override
+	public Tag findByName(String name) {
+		try {
+			return jdbcTemplate.queryForObject(FIND_BY_NAME, new TagMapper(), name);
+		} catch (EmptyResultDataAccessException e) {
+			return null;
+		}
 	}
 
 }

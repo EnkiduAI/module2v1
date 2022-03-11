@@ -8,6 +8,7 @@ public interface TagDao {
 	int create(String name);
 	int delete(int id);
 	int unbindTag(int id);
+	Tag findByName(String name);
 	Tag findById(int id);
-	List<Tag>findAll();
+	List<Tag>findAll(int page, int limit);
 }

@@ -19,3 +19,9 @@ CREATE TABLE `gift_certificate_has_tag` (
   `gift_certificate_id` INT NOT NULL references gift_certificate (id),
   `tag_id` INT NOT NULL references tag (id),
   PRIMARY KEY (`id_gift_certificate_has_tag`));
+  
+  CREATE TABLE `users` (
+  `user_id` INT NOT NULL AUTO_INCREMENT,
+  `user_name` VARCHAR(45) NOT NULL,
+  `user_surname` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`user_id`));

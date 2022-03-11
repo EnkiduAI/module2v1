@@ -12,10 +12,10 @@ public interface CertificateDao {
 	int bindTag(int certificateId, int tagId);
 	int unbindCertificate(int id);
 	GiftCertificate findById(int id);
-	List<GiftCertificate> findAll();	
-	List<CertificateWithTag>findAllCertificatesWithTags();
+	List<GiftCertificate> findAll(int page, int limit);	
+	List<CertificateWithTag>findAllCertificatesWithTags(int page, int limit);
 	CertificateWithTag findCertificateWithTag(int tagId, int certificateId);
-	List<CertificateWithTag> findCertificateWithTagByTagname(String tagName);
-	List<CertificateWithTag> findCertificateWithTagByCertificate(String partName);
-	List<CertificateWithTag> findCertificateWithTagByCertificateAndTagname(String tagName, String certificateName);
+	List<CertificateWithTag> findCertificateWithTagByTagname(String tagName, int page, int limit);
+	List<CertificateWithTag> findCertificateWithTagByCertificate(String partName, int page, int limit);
+	List<CertificateWithTag> findCertificateWithTagByCertificateAndTagname(String tagName, String certificateName, int page, int limit);
 }

@@ -1,8 +1,10 @@
 package com.epam.esm.exception;
 
 @SuppressWarnings("serial")
-public class ServiceException extends Exception{
+public class ServiceException extends Throwable{
 
+	private String errorCode;
+	
 	public ServiceException() {
 		
 	}
@@ -17,6 +19,19 @@ public class ServiceException extends Exception{
 	
 	public ServiceException(Throwable cause) {
 		super(cause);
+	}
+	
+	public ServiceException(String message, String errorCode) {
+		super(message);
+		this.errorCode = errorCode;
+	}
+
+	public String getErrorCode() {
+		return errorCode;
+	}
+
+	public void setErrorCode(String errorCode) {
+		this.errorCode = errorCode;
 	}
 
 }

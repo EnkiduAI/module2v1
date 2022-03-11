@@ -1,19 +1,58 @@
 package com.epam.esm.model.entity;
 
-import org.springframework.stereotype.Component;
+import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 
-@Component
-public class Tag {
-	private int id;
-	private String name;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToMany;
+import javax.persistence.Table;
+
+@EntityListeners(Auditable.class)
+@Entity
+@Table(name = "tag")
+public class Tag implements Serializable{
+	private static final long serialVersionUID = 1L;
 	
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "id_tag")
+	private int id;
+	@Column(name = "tag_name")
+	private String name;
+	@ManyToMany(mappedBy = "tags")
+	private Set<GiftCertificate> giftCertificates = new HashSet<>();
+
 	public Tag() {
 		
 	}
-
+	
 	public Tag(int id, String name) {
 		this.id = id;
 		this.name = name;
+	}
+	
+	public void addCertificate(GiftCertificate certificate) {
+		this.giftCertificates.add(certificate);
+		certificate.getTags().add(this);
+	}
+	
+	public void removeCertificate(GiftCertificate certificate) {
+		this.giftCertificates.remove(certificate);
+		certificate.getTags().remove(this);
+	}
+	
+	public Set<GiftCertificate> getGiftCertificates() {
+		return giftCertificates;
+	}
+
+	public void setGiftCertificates(Set<GiftCertificate> giftCertificates) {
+		this.giftCertificates = giftCertificates;
 	}
 
 	public int getId() {

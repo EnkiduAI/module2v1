@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -22,29 +23,30 @@ import com.epam.esm.model.entity.mapper.GiftCertificateMapper;
 @Repository
 public class JdbcTemplateCertificateDaoImpl implements CertificateDao {
 
-	private static final String FIND_BY_ID = "select gift_certificate.id, gift_certificate.name, "
+	private static final String FIND_BY_ID = "select gift_certificate.cert_id, gift_certificate.name, "
 			+ "gift_certificate.description, gift_certificate.price, "
 			+ "gift_certificate.duration, gift_certificate.create_date, "
 			+ "gift_certificate.last_update_date from gift_certificate " + "where gift_certificate.id =?";
 
 	private static final String FIND_ALL = """
-			select gift_certificate.id, gift_certificate.name,
+			select gift_certificate.cert_id, gift_certificate.name,
 			gift_certificate.description, gift_certificate.price,
 			gift_certificate.duration, gift_certificate.create_date,
-			gift_certificate.last_update_date from certificates.gift_certificate
+			gift_certificate.last_update_date from gift_certificate
+			limit ?,?
 			""";
 
 	private static final String INSERT_CERTIFICATE = """
-			insert into certificates.gift_certificate values(null, ?, ?, ?, ?, ?, ?)
+			insert into gift_certificate values(null, ?, ?, ?, ?, ?, ?)
 			""";
 
 	private static final String UPDATE_SERTIFICATE = """
 			update certificates.gift_certificate set name=?, description=?,
-			price=?, duration=?, last_update_date=? where id=?
+			price=?, duration=?, last_update_date=? where cert_id=?
 			""";
 
 	private static final String DELETE_SERTIFICATE = """
-			delete from certificates.gift_certificate where id=?
+			delete from certificates.gift_certificate where cert_id=?
 			""";
 
 	private static final String BIND_TAG = """
@@ -52,46 +54,50 @@ public class JdbcTemplateCertificateDaoImpl implements CertificateDao {
 			""";
 
 	private static final String FIND_ALL_CERTIFICATES_WITH_TAGS = """
-			SELECT t.id, t.tag_name, gc.id, gc.name, gc.description,
+			SELECT t.id_tag, t.tag_name, gc.cert_id, gc.name, gc.description,
 			gc.price, gc.duration, gc.create_date,
 			gc.last_update_date
 			FROM certificates.gift_certificate_has_tag as gt
-			join gift_certificate as gc on gc.id = gt.gift_certificate_id
-			join tag as t on t.id = gt.tag_id
+			join gift_certificate as gc on gc.cert_id = gt.gift_certificate_id
+			join tag as t on t.id_tag = gt.tag_id
+			limit ?,?
 			""";
 
 	private static final String FIND_ALL_CERTIFICATES_WITH_TAGS_BY_TAGNAME = """
-			SELECT t.id, t.tag_name, gc.id, gc.name, gc.description,
+			SELECT t.id_tag, t.tag_name, gc.cert_id, gc.name, gc.description,
 			gc.price, gc.duration, gc.create_date,
 			gc.last_update_date
 			FROM certificates.gift_certificate_has_tag as gt
-			join gift_certificate as gc on gc.id = gt.gift_certificate_id
-			join tag as t on t.id = gt.tag_id
+			join gift_certificate as gc on gc.cert_id = gt.gift_certificate_id
+			join tag as t on t.id_tag = gt.tag_id
 			where t.tag_name = ?
+			limit ?,?
 			""";
 
 	private static final String FIND_ALL_CERTIFICATES_WITH_TAGS_BY_CERTIFICATE = """
-			SELECT t.id, t.tag_name, gc.id, gc.name, gc.description,
+			SELECT t.id_tag, t.tag_name, gc.cert_id, gc.name, gc.description,
 			gc.price, gc.duration, gc.create_date,
 			gc.last_update_date
 			FROM certificates.gift_certificate_has_tag as gt
-			join gift_certificate as gc on gc.id = gt.gift_certificate_id
-			join tag as t on t.id = gt.tag_id
+			join gift_certificate as gc on gc.cert_id = gt.gift_certificate_id
+			join tag as t on t.id_tag = gt.tag_id
 			where gc.name like ?
+			limit ?,?
 			""";
 
 	private static final String CERTIFICATES_WITH_TAGS_BY_CERTIFICATE_AND_TAGNAME = """
-			SELECT t.id, t.tag_name, gc.id, gc.name, gc.description,
+			SELECT t.id_tag, t.tag_name, gc.cert_id, gc.name, gc.description,
 			gc.price, gc.duration, gc.create_date,
 			gc.last_update_date
 			FROM certificates.gift_certificate_has_tag as gt
-			join gift_certificate as gc on gc.id = gt.gift_certificate_id
-			join tag as t on t.id = gt.tag_id
-			where t.tag_name = ? and gc.name like ?  
+			join gift_certificate as gc on gc.cert_id = gt.gift_certificate_id
+			join tag as t on t.id_tag = gt.tag_id
+			where t.tag_name = ? and gc.name like ?
+			limit ?,?
 			""";
 
 	private static final String FIND_CERTIFICATE_WITH_TAG = """
-			SELECT t.id, t.tag_name, gc.id, gc.name, gc.description,
+			SELECT t.id_tag, t.tag_name, gc.cert_id, gc.name, gc.description,
 			gc.price, gc.duration, gc.create_date,
 			gc.last_update_date
 			FROM certificates.gift_certificate_has_tag as gt
@@ -175,7 +181,11 @@ public class JdbcTemplateCertificateDaoImpl implements CertificateDao {
 	 */
 	@Override
 	public GiftCertificate findById(int id) {
-		return jdbcTemplate.queryForObject(FIND_BY_ID, new GiftCertificateMapper(), id);
+		try {
+			return jdbcTemplate.queryForObject(FIND_BY_ID, new GiftCertificateMapper(), id);
+		} catch (EmptyResultDataAccessException e) {
+			return null;
+		}
 	}
 
 	/**
@@ -184,8 +194,8 @@ public class JdbcTemplateCertificateDaoImpl implements CertificateDao {
 	 * @return the list
 	 */
 	@Override
-	public List<GiftCertificate> findAll() {
-		return jdbcTemplate.query(FIND_ALL, new GiftCertificateMapper());
+	public List<GiftCertificate> findAll(int page, int limit) {
+		return jdbcTemplate.query(FIND_ALL, new GiftCertificateMapper(), (page - 1) * limit, limit);
 	}
 
 	/**
@@ -206,8 +216,9 @@ public class JdbcTemplateCertificateDaoImpl implements CertificateDao {
 	 * @return the list
 	 */
 	@Override
-	public List<CertificateWithTag> findAllCertificatesWithTags() {
-		return jdbcTemplate.query(FIND_ALL_CERTIFICATES_WITH_TAGS, new CertificateWithTagMapper());
+	public List<CertificateWithTag> findAllCertificatesWithTags(int page, int limit) {
+		return jdbcTemplate.query(FIND_ALL_CERTIFICATES_WITH_TAGS, new CertificateWithTagMapper(), (page - 1) * limit,
+				limit);
 	}
 
 	/**
@@ -235,19 +246,21 @@ public class JdbcTemplateCertificateDaoImpl implements CertificateDao {
 	}
 
 	@Override
-	public List<CertificateWithTag> findCertificateWithTagByTagname(String tagName) {
-		return jdbcTemplate.query(FIND_ALL_CERTIFICATES_WITH_TAGS_BY_TAGNAME, new CertificateWithTagMapper(), tagName);
+	public List<CertificateWithTag> findCertificateWithTagByTagname(String tagName, int page, int limit) {
+		return jdbcTemplate.query(FIND_ALL_CERTIFICATES_WITH_TAGS_BY_TAGNAME, new CertificateWithTagMapper(), tagName,
+				(page - 1) * limit, limit);
 	}
 
 	@Override
-	public List<CertificateWithTag> findCertificateWithTagByCertificate(String partName) {
+	public List<CertificateWithTag> findCertificateWithTagByCertificate(String partName, int page, int limit) {
 		return jdbcTemplate.query(FIND_ALL_CERTIFICATES_WITH_TAGS_BY_CERTIFICATE, new CertificateWithTagMapper(),
-				"%" + partName + "%");
+				"%" + partName + "%", (page - 1)* limit, limit);
 	}
 
 	@Override
-	public List<CertificateWithTag> findCertificateWithTagByCertificateAndTagname(String tagName, String certificateName) {
+	public List<CertificateWithTag> findCertificateWithTagByCertificateAndTagname(String tagName,
+			String certificateName, int page, int limit) {
 		return jdbcTemplate.query(CERTIFICATES_WITH_TAGS_BY_CERTIFICATE_AND_TAGNAME, new CertificateWithTagMapper(),
-				tagName, "%" + certificateName + "%");
+				tagName, "%" + certificateName + "%", (page - 1) * limit, limit);
 	}
 }

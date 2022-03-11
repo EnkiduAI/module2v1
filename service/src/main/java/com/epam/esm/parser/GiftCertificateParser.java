@@ -19,7 +19,7 @@ public class GiftCertificateParser {
 			try {
 				Integer.parseInt(giftCertificate.get("price").toString());
 			} catch (NumberFormatException e) {
-				throw new ServiceException("Price format is incorrect");
+				throw new ServiceException("serviceException.certificateParser.price");
 			}
 		}
 		if (giftCertificate.containsKey("name")) {
@@ -32,11 +32,11 @@ public class GiftCertificateParser {
 			try {
 				duration = Integer.parseInt(giftCertificate.get("duration").toString());
 			} catch (NumberFormatException e) {
-				throw new ServiceException("duration format is incorrect");
+				throw new ServiceException("serviceException.certificateParser.duration");
 			}
 		}
 		if(duration < 0) {
-			throw new ServiceException("duration cannot be negative");
+			throw new ServiceException("serviceException.certificateParser.durationNegative");
 		}
 		Pattern namePattern = Pattern.compile(NAME_REGEX);
 		Pattern descritpionPattern = Pattern.compile(DESCRIPTION_REGEX);
@@ -45,11 +45,11 @@ public class GiftCertificateParser {
 		Matcher descritionMatcher = descritpionPattern.matcher(description);
 
 		if(!nameMatcher.matches()) {
-			throw new ServiceException("Name format is incorrect");
+			throw new ServiceException("serviceException.certificateParser.name");
 		}
 		
 		if(!descritionMatcher.matches()) {
-			throw new ServiceException("description format is incorrect");
+			throw new ServiceException("serviceException.certificateParser.description");
 		}
 	}
 }

@@ -28,7 +28,7 @@ public class UserServiceImpl implements UserService {
 	public User findById(int id) throws ServiceException, NotFoundException {
 		User user = userDao.findById(id);
 		if(user == null) {
-			throw new NotFoundException("User with id = "+id+" does not exist");
+			throw new NotFoundException("notFoundError.user");
 		}
 		return userDao.findById(id);
 	}
@@ -36,7 +36,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public List<User> findAll(int page, int limit) throws ServiceException {
 		if(!validator.isPageble(page, limit)) {
-			throw new ServiceException("Page & Size are incorrect");
+			throw new ServiceException("serviceException.pageSize");
 		}
 		return userDao.findAll(page, limit);
 	}

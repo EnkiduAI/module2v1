@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
@@ -35,10 +36,16 @@ public class UserPersistenceImpl implements UserPersistence {
 	@Override
 	public User findById(int id) {
 		EntityManager em = factory.createEntityManager();
-		TypedQuery<User> query = em.createQuery("select u from User u where userId = :id", User.class)
-				.setParameter("id", id);
-		User user = query.getSingleResult();
-		em.close();
+		User user = new User();
+		try {
+			TypedQuery<User> query = em.createQuery("select u from User u where userId = :id", User.class)
+					.setParameter("id", id);
+			user = query.getSingleResult();
+		} catch (NoResultException e) {
+			return null;
+		} finally {
+			em.close();
+		}
 		return user;
 	}
 
@@ -46,9 +53,9 @@ public class UserPersistenceImpl implements UserPersistence {
 	public Tag findMostPopularTag() {
 		EntityManager em = factory.createEntityManager();
 		Tag tag = new Tag();
-		try {			
+		try {
 			Query query = em.createNativeQuery(FIND_MOST_POPULAR_TAG, Tag.class);
-			tag = (Tag)query.getSingleResult();
+			tag = (Tag) query.getSingleResult();
 		} finally {
 			em.close();
 		}

@@ -65,10 +65,10 @@ public class TagPersistenceImpl implements TagPersistence {
 			}
 			em.getTransaction().commit();
 			result = 1;
-		}catch (HibernateException e) {
+		} catch (HibernateException e) {
 			em.getTransaction().rollback();
 			throw new HibernateException("Cannot unbind tag");
-		}finally {
+		} finally {
 			em.close();
 		}
 		return result;

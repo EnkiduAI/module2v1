@@ -23,7 +23,7 @@ public interface CertificateService {
 	GiftCertificate update(Map<String, Object> certificate, int id) throws ServiceException;// check
 
 	CertificateWithTag updateWithTag(Map<String, Object> fields, int certificateId)
-			throws ServiceException;
+			throws ServiceException, NotFoundException;
 
 	List<CertificateWithTag> getCertificatesWithTags(int page, int limit) throws ServiceException, NotFoundException;// check
 

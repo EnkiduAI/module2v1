@@ -40,10 +40,10 @@ public class OrderServiceImpl implements OrderService {
 		User user = userDao.findById(userId);
 		GiftCertificate certificate = certificateDao.findById(certificateId);
 		if (user == null) {
-			throw new NotFoundException("Cannot find user with id = " + userId);
+			throw new NotFoundException("notFoundError.user");
 		}
 		if (certificate == null) {
-			throw new NotFoundException("Cannot find certificate with id = " + certificateId);
+			throw new NotFoundException("notFoundError.certificate");
 		}
 		int orderId = orderDao.createOrder(user, certificate);
 		return orderDao.findOrderById(orderId);
@@ -55,12 +55,12 @@ public class OrderServiceImpl implements OrderService {
 		User user = userDao.findById(userId);
 		Order order = orderDao.findOrderById(orderId);
 		if (order == null) {
-			throw new NotFoundException("Cannot find order with id = " + orderId);
+			throw new NotFoundException("notFoundError.order");
 		}
 		if (user != null) {
 			return orderDao.findUserOrderById(userId, orderId);
 		} else {
-			throw new NotFoundException("Cannot find user with id = " + userId);
+			throw new NotFoundException("notFoundError.user");
 		}
 	}
 
@@ -68,13 +68,13 @@ public class OrderServiceImpl implements OrderService {
 	@Override
 	public List<Order> findAllUserOrders(int userId, int page, int limit) throws NotFoundException, ServiceException {
 		if (!validator.isPageble(page, limit)) {
-			throw new ServiceException("Page & Size are incorrect");
+			throw new ServiceException("serviceException.pageSize");
 		}
 		User user = userDao.findById(userId);
 		if (user != null) {
 			return orderDao.findAllUserOrders(userId, page, limit);
 		} else {
-			throw new NotFoundException("Cannot find user with id = " + userId);
+			throw new NotFoundException("notFoundError.user");
 		}
 	}
 

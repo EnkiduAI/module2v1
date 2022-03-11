@@ -1,6 +1,5 @@
 package com.epam.esm.persistence.impl;
 
-
 import static com.epam.esm.persistence.query.OrderQuery.FIND_ALL_USER_ORDERS;
 import static com.epam.esm.persistence.query.OrderQuery.FIND_ORDER_BY_ID;
 import static com.epam.esm.persistence.query.OrderQuery.FIND_USER_ORDER_BY_ID;
@@ -59,8 +58,8 @@ public class OrderPersistanceImpl implements OrderPersistance {
 		try {
 			em.getTransaction().begin();
 			TypedQuery<Order> query = em.createQuery(FIND_ALL_USER_ORDERS, Order.class).setParameter("id", userId);
-				query.setFirstResult((page-1)*limit);
-				query.setMaxResults(limit);
+			query.setFirstResult((page - 1) * limit);
+			query.setMaxResults(limit);
 			orderList = query.getResultList();
 			em.getTransaction().commit();
 		} catch (NoResultException e) {
@@ -75,9 +74,14 @@ public class OrderPersistanceImpl implements OrderPersistance {
 	@Override
 	public Order findUserOrderById(int userId, int orderId) {
 		EntityManager em = factory.createEntityManager();
-		TypedQuery<Order> query = em.createQuery(FIND_USER_ORDER_BY_ID, Order.class).setParameter("idUser", userId)
-				.setParameter("idOrder", orderId);
-		Order order = query.getSingleResult();
+		Order order = new Order();
+		try {
+			TypedQuery<Order> query = em.createQuery(FIND_USER_ORDER_BY_ID, Order.class).setParameter("idUser", userId)
+					.setParameter("idOrder", orderId);
+			order = query.getSingleResult();
+		} catch (NoResultException e) {
+			return null;
+		}
 		em.close();
 		return order;
 	}
@@ -85,9 +89,15 @@ public class OrderPersistanceImpl implements OrderPersistance {
 	@Override
 	public Order findOrderById(int orderId) {
 		EntityManager em = factory.createEntityManager();
-		TypedQuery<Order> query= em.createQuery(FIND_ORDER_BY_ID, Order.class).setParameter("id", orderId);
-		Order order = query.getSingleResult();
-		em.close();
+		Order order = new Order();
+		try {
+			TypedQuery<Order> query = em.createQuery(FIND_ORDER_BY_ID, Order.class).setParameter("id", orderId);
+			order = query.getSingleResult();
+		} catch (NoResultException e) {
+			return null;
+		} finally {
+			em.close();
+		}
 		return order;
 	}
 

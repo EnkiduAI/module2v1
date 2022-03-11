@@ -87,7 +87,7 @@ public class CertificateServiceImpl implements CertificateService {
 		if (certificateDao.bindTag(certificateId, tagId) > 0) {
 			return certificateDao.findCertificateWithTag(tagId, certificateId);
 		} else {
-			throw new ServiceException("Error caused by bindind tag with certificate");
+			throw new ServiceException("serviceException.bindError");
 		}
 	}
 
@@ -105,7 +105,7 @@ public class CertificateServiceImpl implements CertificateService {
 			throw new ServiceException("id cannot be 0 or less");
 		}
 		if (certificateDao.findById(id) == null) {
-			throw new NotFoundException("Entry with id = " + id + " not exsist");
+			throw new NotFoundException("notFoundError.certificate");
 		}
 		return certificateDao.findById(id);
 	}
@@ -120,11 +120,11 @@ public class CertificateServiceImpl implements CertificateService {
 	@Override
 	public List<GiftCertificate> findAllCertificates(int page, int limit) throws ServiceException, NotFoundException {
 		if (!validator.isPageble(page, limit)) {
-			throw new ServiceException("Page & Size are incorrect");
+			throw new ServiceException("serviceException.pageSize");
 		}
 		List<GiftCertificate> certificates = certificateDao.findAll(page, limit);
 		if (certificates == null) {
-			throw new NotFoundException("Cannot find certificates on given criteria");
+			throw new NotFoundException("notFoundError.certificate");
 		}
 		return certificateDao.findAll(page, limit);
 	}
@@ -166,14 +166,18 @@ public class CertificateServiceImpl implements CertificateService {
 	 * @param certificateId the certificate id
 	 * @return the certificate with tag
 	 * @throws ServiceException the service exception
+	 * @throws NotFoundException 
 	 */
 	@Transactional
 	@Override
 	public CertificateWithTag updateWithTag(Map<String, Object> fields, int certificateId)
-			throws ServiceException {
+			throws ServiceException, NotFoundException {
 		GiftCertificateParser.parseToGiftCertificate(fields);
 		int tagId;
 		GiftCertificate certificateToUpdate = certificateDao.findById(certificateId);
+		if(certificateToUpdate == null) {
+			throw new NotFoundException("notFoundError.certificate");
+		}
 		if (fields.get("name") != null) {
 			certificateToUpdate.setName(fields.get("name").toString());
 		}
@@ -198,7 +202,7 @@ public class CertificateServiceImpl implements CertificateService {
 		if (certificateDao.bindTag(certId, tagId) > 0) {
 			return certificateDao.findCertificateWithTag(tagId, certId);
 		} else {
-			throw new ServiceException("Error caused by bindind tag with certificate");
+			throw new ServiceException("serviceException.bindError");
 		}
 	}
 
@@ -214,11 +218,11 @@ public class CertificateServiceImpl implements CertificateService {
 	@Override
 	public List<CertificateWithTag> getCertificatesWithTags(int page, int limit) throws ServiceException, NotFoundException {
 		if (!validator.isPageble(page, limit)) {
-			throw new ServiceException("Page & Size are incorrect");
+			throw new ServiceException("serviceException.pageSize");
 		}
 		List<CertificateWithTag> cwt = certificateDao.findAllCertificatesWithTags(page, limit);
-		if(cwt == null) {
-			throw new NotFoundException("Cannot find certificates on given criteria");
+		if(cwt.isEmpty()) {
+			throw new NotFoundException("notFoundError.certificateList");
 		}
 		return cwt;
 	}
@@ -229,11 +233,11 @@ public class CertificateServiceImpl implements CertificateService {
 	public List<CertificateWithTag> getCertificatesWithTagsByTagname(String tagName, int page, int limit)
 			throws ServiceException, NotFoundException {
 		if (!validator.isPageble(page, limit)) {
-			throw new ServiceException("Page & Size are incorrect");
+			throw new ServiceException("serviceException.pageSize");
 		}
 		List<CertificateWithTag> cwt = certificateDao.findCertificateWithTagByTagname(tagName, page, limit);
-		if(cwt == null) {
-			throw new NotFoundException("Cannot find certificates on given criteria");
+		if(cwt.isEmpty()) {
+			throw new NotFoundException("notFoundError.certificateList");
 		}
 		return cwt;
 	}
@@ -242,11 +246,11 @@ public class CertificateServiceImpl implements CertificateService {
 	public List<CertificateWithTag> getCertificatesWithTagsByTagnameSorted(String tagName, String sortType, int page,
 			int limit) throws ServiceException, NotFoundException {
 		if (!validator.isPageble(page, limit)) {
-			throw new ServiceException("Page & Size are incorrect");
+			throw new ServiceException("serviceException.pageSize");
 		}
 		List<CertificateWithTag> list = certificateDao.findCertificateWithTagByTagname(tagName, page, limit);
-		if(list == null) {
-			throw new NotFoundException("Cannot find certificates on given criteria");
+		if(list.isEmpty()) {
+			throw new NotFoundException("notFoundError.certificateList");
 		}
 		return sort(list, sortType);
 	}
@@ -255,11 +259,11 @@ public class CertificateServiceImpl implements CertificateService {
 	public List<CertificateWithTag> getCertificatesWithTagsByCertificate(String certificateName, int page, int limit)
 			throws ServiceException, NotFoundException {
 		if (!validator.isPageble(page, limit)) {
-			throw new ServiceException("Page & Size are incorrect");
+			throw new ServiceException("serviceException.pageSize");
 		}
 		List<CertificateWithTag> cwt = certificateDao.findCertificateWithTagByCertificate(certificateName, page, limit);
-		if(cwt == null) {
-			throw new NotFoundException("Cannot find certificates on given criteria");
+		if(cwt.isEmpty()) {
+			throw new NotFoundException("notFoundError.certificateList");
 		}
 		return cwt;
 	}
@@ -268,12 +272,12 @@ public class CertificateServiceImpl implements CertificateService {
 	public List<CertificateWithTag> getCertificatesWithTagsByCertificateSorted(String certificateName, String sortType,
 			int page, int limit) throws ServiceException, NotFoundException {
 		if (!validator.isPageble(page, limit)) {
-			throw new ServiceException("Page & Size are incorrect");
+			throw new ServiceException("serviceException.pageSize");
 		}
 		List<CertificateWithTag> list = certificateDao.findCertificateWithTagByCertificate(certificateName, page,
 				limit);
-		if(list == null) {
-			throw new NotFoundException("Cannot find certificates on given criteria");
+		if(list.isEmpty()) {
+			throw new NotFoundException("notFoundError.certificateList");
 		}
 		return sort(list, sortType);
 	}
@@ -282,11 +286,11 @@ public class CertificateServiceImpl implements CertificateService {
 	public List<CertificateWithTag> getCertificatesWithTagsByCertificateAndTagname(String tagName,
 			String certificateName, int page, int limit) throws ServiceException, NotFoundException {
 		if (!validator.isPageble(page, limit)) {
-			throw new ServiceException("Page & Size are incorrect");
+			throw new ServiceException("serviceException.pageSize");
 		}
 		List<CertificateWithTag> cwt = certificateDao.findCertificateWithTagByCertificateAndTagname(tagName, certificateName, page, limit);
-		if(cwt == null) {
-			throw new NotFoundException("Cannot find certificates on given criteria");
+		if(cwt.isEmpty()) {
+			throw new NotFoundException("notFoundError.certificateList");
 		}
 		return cwt;
 	}
@@ -295,12 +299,12 @@ public class CertificateServiceImpl implements CertificateService {
 	public List<CertificateWithTag> getCertificatesWithTagsByCertificateAndTagnameSorted(String tagName,
 			String certificateName, String sortType, int page, int limit) throws ServiceException, NotFoundException {
 		if (!validator.isPageble(page, limit)) {
-			throw new ServiceException("Page & Size are incorrect");
+			throw new ServiceException("serviceException.pageSize");
 		}
 		List<CertificateWithTag> list = certificateDao.findCertificateWithTagByCertificateAndTagname(tagName,
 				certificateName, page, limit);
-		if(list == null) {
-			throw new NotFoundException("Cannot find certificates on given criteria");
+		if(list.isEmpty()) {
+			throw new NotFoundException("notFoundError.certificateList");
 		}
 		return sort(list, sortType);
 	}
@@ -320,7 +324,7 @@ public class CertificateServiceImpl implements CertificateService {
 		if (certificateDao.delete(certId) > 0) {
 			return deleted;
 		} else {
-			throw new ServiceException("Method deleteCertificate at CertificateServiceImpl was interrupted with error");
+			throw new ServiceException("serviceException.certificateDeletionError");
 		}
 	}
 

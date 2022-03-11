@@ -50,7 +50,7 @@ public class TagServiceImpl implements TagService {
 	public Tag findTagById(int id) throws ServiceException, NotFoundException {
 		Tag tag = tagDao.findById(id);
 		if(tag == null) {
-			throw new NotFoundException("Tag with id = "+id+" does not exist");
+			throw new NotFoundException("notFoundError.tag");
 		}
 		return tagDao.findById(id);
 	}
@@ -64,7 +64,7 @@ public class TagServiceImpl implements TagService {
 	@Override
 	public List<Tag> findAllTags(int page, int limit) throws ServiceException {
 		if(!validator.isPageble(page, limit)) {
-			throw new ServiceException("Page & Size are incorrect");
+			throw new ServiceException("serviceException.pageSize");
 		}
 		return tagDao.findAll(page, limit);
 	}
@@ -84,7 +84,7 @@ public class TagServiceImpl implements TagService {
 		if (tagDao.delete(tagId) > 0) {
 			return deleted;
 		} else {
-			throw new ServiceException("Method deleteTag at ProjectServiceImpl has been interrupted with error");
+			throw new ServiceException("serviceException.tagDeletionError");
 		}
 	}
 }

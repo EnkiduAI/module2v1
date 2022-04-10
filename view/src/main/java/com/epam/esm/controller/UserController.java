@@ -28,7 +28,7 @@ import com.epam.esm.model.service.impl.UserServiceImpl;
 
 @RestController
 @ComponentScan(basePackages = { "com.epam.esm" })
-@RequestMapping("/view/api/user")
+@RequestMapping("/view/api")
 public class UserController {
 
 	private DtoConverter converter = DtoConverter.getInstance();
@@ -36,7 +36,7 @@ public class UserController {
 	@Autowired
 	private UserServiceImpl service;
 
-	@GetMapping
+	@GetMapping("/admin/users")
 	@ResponseBody
 	public ResponseEntity<List<UserDto>> findAllUsers(@QueryParam("page") int page, @QueryParam("limit") int limit)
 			throws ServiceException, NotFoundException {
@@ -48,7 +48,7 @@ public class UserController {
 		return new ResponseEntity<>(userDto, HttpStatus.OK);
 	}
 
-	@GetMapping("/{id}")
+	@GetMapping("admin/user/{id}")
 	@ResponseBody
 	public ResponseEntity<UserDto> findUserById(@PathVariable("id") int id) throws ServiceException, NotFoundException {
 		User user = service.findById(id);
@@ -57,7 +57,7 @@ public class UserController {
 		return new ResponseEntity<>(userDto, HttpStatus.OK);
 	}
 
-	@GetMapping("/popular/tag")
+	@GetMapping("/popular")
 	@ResponseBody
 	public ResponseEntity<TagDto> getMostPopularTag() throws ServiceException {
 		Tag tag = service.findMostPopularTag();

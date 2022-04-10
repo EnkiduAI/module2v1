@@ -28,7 +28,7 @@ import com.epam.esm.model.service.impl.CertificateServiceImpl;
 
 @RestController
 @ComponentScan(basePackages = { "com.epam.esm" })
-@RequestMapping("/view/api/certificateWithTag")
+@RequestMapping("/view/api")
 public class CertificateWithTagController {
 
 	/** Converter. */
@@ -45,7 +45,7 @@ public class CertificateWithTagController {
 	 * @return the certificates with tags
 	 * @throws NotFoundException
 	 */
-	@GetMapping
+	@GetMapping("/certificateWithTag")
 	@ResponseBody
 	public ResponseEntity<List<CertificateWithTagDto>> getCertificatesWithTags(@QueryParam("page") int page,
 			@QueryParam("limit") int limit) throws NotFoundException, ServiceException {
@@ -54,7 +54,7 @@ public class CertificateWithTagController {
 		return new ResponseEntity<>(cwtDto, HttpStatus.OK);
 	}
 
-	@GetMapping("/tag/{name}")
+	@GetMapping("/certificateWithTag/tag/{name}")
 	@ResponseBody
 	public ResponseEntity<List<CertificateWithTagDto>> getCertificatesWithTagByTagname(
 			@PathVariable(name = "name", required = false) String tagName, @QueryParam("page") int page,
@@ -64,7 +64,7 @@ public class CertificateWithTagController {
 		return new ResponseEntity<>(cwtDto, HttpStatus.OK);
 	}
 
-	@GetMapping("/tags/{tag}")
+	@GetMapping("/certificateWithTag/tags/{tag}")
 	public ResponseEntity<List<CertificateWithTagDto>> getCertificatesByMultipleTags(
 			@PathVariable("tag") List<String> tags, @QueryParam("page") int page, @QueryParam("limit") int limit)
 			throws NotFoundException, ServiceException {
@@ -78,7 +78,7 @@ public class CertificateWithTagController {
 		return new ResponseEntity<>(cwtDto, HttpStatus.OK);
 	}
 
-	@GetMapping("/tag/{name}/{sortType}")
+	@GetMapping("/certificateWithTag/tag/{name}/{sortType}")
 	@ResponseBody
 	public ResponseEntity<List<CertificateWithTagDto>> getCertificatesWithTagByTagnameSorted(
 			@PathVariable("name") String tagName, @PathVariable("sortType") String sortType,
@@ -88,7 +88,7 @@ public class CertificateWithTagController {
 		return new ResponseEntity<>(cwtDto, HttpStatus.OK);
 	}
 
-	@GetMapping("/certificate/{name}")
+	@GetMapping("/certificateWithTag/certificate/{name}")
 	@ResponseBody
 	public ResponseEntity<List<CertificateWithTagDto>> getCertificatesWithTagByCertificate(
 			@PathVariable("name") String certificateName, @QueryParam("page") int page, @QueryParam("limit") int limit)
@@ -98,7 +98,7 @@ public class CertificateWithTagController {
 		return new ResponseEntity<>(cwtDto, HttpStatus.OK);
 	}
 
-	@GetMapping("/certificate/{name}/{sortType}")
+	@GetMapping("/certificateWithTag/certificate/{name}/{sortType}")
 	@ResponseBody
 	public ResponseEntity<List<CertificateWithTagDto>> getCertificatesWithTagByCertificateSorted(
 			@PathVariable("name") String certificateName, @PathVariable("sortType") String sortType,
@@ -109,7 +109,7 @@ public class CertificateWithTagController {
 		return new ResponseEntity<>(cwtDto, HttpStatus.OK);
 	}
 
-	@GetMapping("/{tagName}/{certificateName}")
+	@GetMapping("/certificateWithTag/{tagName}/{certificateName}")
 	@ResponseBody
 	public ResponseEntity<List<CertificateWithTagDto>> getCertificatesWithTagByCertificateAndTagname(
 			@PathVariable("certificateName") String certificateName, @PathVariable("tagName") String tagName,
@@ -120,7 +120,7 @@ public class CertificateWithTagController {
 		return new ResponseEntity<>(cwtDto, HttpStatus.OK);
 	}
 
-	@GetMapping("/{tagName}/{certificateName}/{sortType}")
+	@GetMapping("/certificateWithTag/{tagName}/{certificateName}/{sortType}")
 	@ResponseBody
 	public ResponseEntity<List<CertificateWithTagDto>> getCertificatesWithTagByCertificateAndTagname(
 			@PathVariable("tagName") String tagName, @PathVariable("certificateName") String certificateName,
@@ -139,7 +139,7 @@ public class CertificateWithTagController {
 	 * @return response entity
 	 */
 
-	@PostMapping
+	@PostMapping("/admin/certificateWithTag")
 	@ResponseBody
 	public ResponseEntity<CertificateWithTagDto> createCertificateWithTag(@RequestBody CertificateWithTag cwt) {
 		CertificateWithTag created = new CertificateWithTag();
@@ -159,7 +159,7 @@ public class CertificateWithTagController {
 	 * @param fields the fields
 	 * @return response entity
 	 */
-	@PatchMapping("/{id}")
+	@PatchMapping("/admin/certificateWithTag/{id}")
 	@ResponseBody
 	public ResponseEntity<CertificateWithTagDto> updateCertificateWithTag(@PathVariable("id") int id,
 			@RequestBody Map<String, Object> fields) throws ServiceException, NotFoundException {

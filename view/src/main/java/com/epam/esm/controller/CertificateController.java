@@ -32,7 +32,7 @@ import com.epam.esm.model.service.impl.CertificateServiceImpl;
 
 @RestController
 @ComponentScan(basePackages = { "com.epam.esm" })
-@RequestMapping("/view/api/certificates")
+@RequestMapping("/view/api")
 public class CertificateController {
 
 	/** Converter. */
@@ -49,7 +49,7 @@ public class CertificateController {
 	 * @throws ServiceException the service exception
 	 */
 
-	@GetMapping
+	@GetMapping("/certificates")
 	@ResponseBody
 	public ResponseEntity<List<GiftCertificateDto>> getAllCertificates(@QueryParam("page") int page,
 			@QueryParam("limit") int limit) throws ServiceException, NotFoundException {
@@ -72,7 +72,7 @@ public class CertificateController {
 	 * @return the certificate by id
 	 * @throws ServiceException the service exception
 	 */
-	@GetMapping("/{id}")
+	@GetMapping("/certificate/{id}")
 	@ResponseBody
 	public ResponseEntity<GiftCertificateDto> getCertificateById(@PathVariable("id") int id)
 			throws ServiceException, NotFoundException {
@@ -89,7 +89,7 @@ public class CertificateController {
 	 * @param fields the fields
 	 * @return response entity
 	 */
-	@PostMapping
+	@PostMapping("/admin/certificate")
 	@ResponseBody
 	public ResponseEntity<GiftCertificateDto> createCertificate(@RequestBody Map<String, Object> createdCertificate)
 			throws ServiceException, NotFoundException {
@@ -108,7 +108,7 @@ public class CertificateController {
 	 * @param request the request
 	 * @return response entity
 	 */
-	@PatchMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+	@PatchMapping(value = "/admin/certificate/update/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	public ResponseEntity<GiftCertificateDto> updateGiftCertificate(@PathVariable("id") int id,
 			@RequestBody Map<String, Object> request) throws ServiceException, NotFoundException {
@@ -123,7 +123,7 @@ public class CertificateController {
 	 * @return response entity
 	 * @throws ServiceException
 	 */
-	@DeleteMapping("/{id}")
+	@DeleteMapping("/admin/certificate/delete/{id}")
 	@ResponseBody
 	public ResponseEntity<GiftCertificateDto> deleteCertificate(@PathVariable("id") int id) throws ServiceException {
 		GiftCertificate certificate = service.deleteCertificate(id);

@@ -21,10 +21,10 @@ import com.epam.esm.model.entity.GiftCertificate;
 import com.epam.esm.model.entity.Order;
 import com.epam.esm.model.entity.User;
 import com.epam.esm.persistence.EntityManagerHelper;
-import com.epam.esm.persistence.OrderPersistance;
+import com.epam.esm.persistence.OrderPersistence;
 
 @Repository
-public class OrderPersistanceImpl implements OrderPersistance {
+public class OrderPersistanceImpl implements OrderPersistence {
 
 	EntityManagerFactory factory = EntityManagerHelper.getFactory();
 

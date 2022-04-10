@@ -12,7 +12,7 @@ import com.epam.esm.model.entity.GiftCertificate;
 import com.epam.esm.model.entity.Order;
 import com.epam.esm.model.entity.User;
 import com.epam.esm.model.service.OrderService;
-import com.epam.esm.persistence.GiftCertificatePersistance;
+import com.epam.esm.persistence.GiftCertificatePersistence;
 import com.epam.esm.persistence.impl.OrderPersistanceImpl;
 import com.epam.esm.persistence.impl.UserPersistenceImpl;
 import com.epam.esm.validator.Validator;
@@ -21,13 +21,13 @@ import com.epam.esm.validator.Validator;
 public class OrderServiceImpl implements OrderService {
 
 	private UserPersistenceImpl userDao;
-	private GiftCertificatePersistance certificateDao;
+	private GiftCertificatePersistence certificateDao;
 	private OrderPersistanceImpl orderDao;
 
 	private Validator validator = new Validator();;
 
 	@Autowired
-	public OrderServiceImpl(GiftCertificatePersistance certificateDao, UserPersistenceImpl userDao,
+	public OrderServiceImpl(GiftCertificatePersistence certificateDao, UserPersistenceImpl userDao,
 			OrderPersistanceImpl orderDao) {
 		this.certificateDao = certificateDao;
 		this.userDao = userDao;

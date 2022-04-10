@@ -29,7 +29,7 @@ import com.epam.esm.model.service.impl.TagServiceImpl;
 
 @RestController
 @ComponentScan(basePackages = { "com.epam.esm" })
-@RequestMapping("/view/api/tags")
+@RequestMapping("/view/api")
 public class TagController {
 
 	/** Converter. */
@@ -46,7 +46,7 @@ public class TagController {
 	 * @throws ServiceException  the service exception
 	 * @throws NotFoundException
 	 */
-	@GetMapping
+	@GetMapping("/tags")
 	@ResponseBody
 	public ResponseEntity<List<TagDto>> getAllTags(@QueryParam("page") int page, @QueryParam("limit") int limit)
 			throws ServiceException, NotFoundException {
@@ -66,7 +66,7 @@ public class TagController {
 	 * @throws ServiceException  the service exception
 	 * @throws NotFoundException
 	 */
-	@GetMapping("/{id}")
+	@GetMapping("/tag/{id}")
 	@ResponseBody
 	public ResponseEntity<TagDto> getTagById(@PathVariable("id") int id) throws ServiceException, NotFoundException {
 		Tag tag = service.findTagById(id);
@@ -81,7 +81,7 @@ public class TagController {
 	 * @param tag the tag
 	 * @return response entity
 	 */
-	@PostMapping
+	@PostMapping("/admin/tag")
 	@ResponseBody
 	public ResponseEntity<TagDto> createTag(@RequestBody Tag tag) throws ServiceException {
 		Tag tagToCreate = service.createTag(tag.getName());
@@ -94,7 +94,7 @@ public class TagController {
 	 * @param id the id
 	 * @return response entity
 	 */
-	@DeleteMapping("/{id}")
+	@DeleteMapping("/admin/tag/{id}")
 	@ResponseBody
 	public ResponseEntity<TagDto> deleteTag(@PathVariable("id") int id) throws ServiceException{
 		Tag tag = service.deleteTag(id);

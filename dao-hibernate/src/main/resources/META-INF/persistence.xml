@@ -16,6 +16,7 @@ mapped to database tables. Database driver, location, userid and pw
     <class>com.epam.esm.model.entity.CertificateWithTag</class>
     <class>com.epam.esm.model.entity.User</class>
     <class>com.epam.esm.model.entity.Order</class>
+    <class>com.epam.esm.model.entity.Role</class>
     <properties>
             <property name="javax.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver" />
             <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/certificates" />

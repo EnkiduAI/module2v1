@@ -1,6 +1,6 @@
 package com.epam.esm.persistence.impl;
 
-import static com.epam.esm.persistence.query.UserQuery.FIND_MOST_POPULAR_TAG;
+import static com.epam.esm.persistence.query.UserQuery.*;
 
 import java.util.List;
 
@@ -12,6 +12,7 @@ import javax.persistence.TypedQuery;
 
 import org.springframework.stereotype.Repository;
 
+import com.epam.esm.model.entity.Role;
 import com.epam.esm.model.entity.Tag;
 import com.epam.esm.model.entity.User;
 import com.epam.esm.persistence.EntityManagerHelper;
@@ -60,6 +61,42 @@ public class UserPersistenceImpl implements UserPersistence {
 			em.close();
 		}
 		return tag;
+	}
+
+	@Override
+	public User findByUsername(String username) {
+		User user = new User();
+		EntityManager em = factory.createEntityManager();
+		try {
+			TypedQuery<User> query = em.createQuery(FIND_USER_BY_LOGIN, User.class).setParameter("login", username);
+			user = query.getSingleResult();
+		} catch (NoResultException e) {
+			return null;
+		} finally {
+			em.close();
+		}
+		return user;
+	}
+
+	@Override
+	public int createUser(User user) {
+		EntityManager em = factory.createEntityManager();
+		em.getTransaction().begin();
+		em.persist(user);
+		int id = user.getUserId();
+		em.getTransaction().commit();
+		em.close();
+		return id;
+	}
+
+	@Override
+	public void updateUserRoles(int id, Role role) {
+		EntityManager em = factory.createEntityManager();
+		em.getTransaction().begin();
+		User user = em.find(User.class, id);
+		user.getRoles().add(role);
+		em.getTransaction().commit();
+		em.close();
 	}
 
 }

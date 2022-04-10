@@ -20,10 +20,10 @@ import com.epam.esm.model.entity.CertificateWithTag;
 import com.epam.esm.model.entity.GiftCertificate;
 import com.epam.esm.model.entity.Tag;
 import com.epam.esm.persistence.EntityManagerHelper;
-import com.epam.esm.persistence.GiftCertificatePersistance;
+import com.epam.esm.persistence.GiftCertificatePersistence;
 
 @Repository
-public class GiftCetificatePersistanceImpl implements GiftCertificatePersistance {
+public class GiftCetificatePersistanceImpl implements GiftCertificatePersistence {
 
 	public GiftCetificatePersistanceImpl() {
 
@@ -53,8 +53,8 @@ public class GiftCetificatePersistanceImpl implements GiftCertificatePersistance
 		int result = 0;
 		em.getTransaction().begin();
 		try {
-			GiftCertificate oldCertificate = em.find(GiftCertificate.class, id);
-			oldCertificate = em.merge(certificate);
+			em.find(GiftCertificate.class, id);
+			em.merge(certificate);
 			em.getTransaction().commit();
 			result = 1;
 		} catch (HibernateException e) {
@@ -103,6 +103,7 @@ public class GiftCetificatePersistanceImpl implements GiftCertificatePersistance
 			throw new HibernateException("Cannot bind tag");
 		}
 		em.close();
+		em1.close();
 		return result;
 	}
 
